@@ -14,6 +14,10 @@ export interface ChartSeries {
   /** Dashed stroke distinguishes series without relying on colour (§6.4). */
   dashed?: boolean;
   area?: boolean;
+  /** Stroke gradient (left → right). Defaults to the series colour. */
+  gradient?: [string, string];
+  /** Soft glow under the line; use for the one series that matters most. */
+  glow?: boolean;
 }
 
 export interface ChartProps {
@@ -115,11 +119,21 @@ export function Chart({ title, summary, labels, series, height = 220, format = (
           <svg viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="none" height={height}>
             <defs>
               {series.map((s) => (
-                <linearGradient key={s.id} id={`${id}-${s.id}`} x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0" stopColor={s.color} stopOpacity="0.26" />
-                  <stop offset="1" stopColor={s.color} stopOpacity="0" />
-                </linearGradient>
+                <g key={s.id}>
+                  <linearGradient id={`${id}-${s.id}`} x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stopColor={s.color} stopOpacity="0.34" />
+                    <stop offset="0.7" stopColor={s.color} stopOpacity="0.06" />
+                    <stop offset="1" stopColor={s.color} stopOpacity="0" />
+                  </linearGradient>
+                  <linearGradient id={`${id}-${s.id}-stroke`} x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0" stopColor={(s.gradient ?? [s.color, s.color])[0]} />
+                    <stop offset="1" stopColor={(s.gradient ?? [s.color, s.color])[1]} />
+                  </linearGradient>
+                </g>
               ))}
+              <filter id={`${id}-glow`} x="-5%" y="-30%" width="110%" height="160%">
+                <feGaussianBlur stdDeviation="6" />
+              </filter>
             </defs>
             <g className={styles.grid}>
               {yTicks.map((_, i) => (
@@ -131,10 +145,21 @@ export function Chart({ title, summary, labels, series, height = 220, format = (
                 {s.area !== false && (
                   <motion.path d={area} fill={`url(#${id}-${s.id})`} initial={false} animate={{ d: area }} transition={transition} />
                 )}
+                {s.glow && (
+                  <motion.path
+                    className={styles.glow}
+                    d={line}
+                    stroke={`url(#${id}-${s.id}-stroke)`}
+                    filter={`url(#${id}-glow)`}
+                    initial={false}
+                    animate={{ d: line }}
+                    transition={transition}
+                  />
+                )}
                 <motion.path
                   className={styles.line}
                   d={line}
-                  stroke={s.color}
+                  stroke={`url(#${id}-${s.id}-stroke)`}
                   strokeDasharray={s.dashed ? "7 7" : undefined}
                   initial={false}
                   animate={{ d: line }}
@@ -143,6 +168,16 @@ export function Chart({ title, summary, labels, series, height = 220, format = (
               </g>
             ))}
           </svg>
+          {active === null &&
+            series
+              .filter((s) => s.glow)
+              .map((s) => (
+                <span
+                  key={`end-${s.id}`}
+                  className={styles.endpoint}
+                  style={{ left: "100%", top: `${(y(s.data[n - 1]) / height) * 100}%`, ["--_c" as string]: (s.gradient ?? [s.color, s.color])[1] }}
+                />
+              ))}
           {active !== null && (
             <>
               <span className={styles.crosshair} style={{ left: `${pct}%` }} />

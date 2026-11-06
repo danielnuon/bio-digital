@@ -5,13 +5,15 @@ import styles from "./Canvas.module.css";
 export interface CanvasProps extends HTMLAttributes<HTMLDivElement> {
   /** Render slow ambient forms (Continuous Vitality, ambient life). */
   ambient?: boolean;
+  /** Environmental light reflects system state (§14.1). */
+  mood?: "calm" | "attention";
   children?: ReactNode;
 }
 
 /** D0 — the environment. Background, living gradient, ambient forms. */
-export function Canvas({ ambient = true, className, children, ...rest }: CanvasProps) {
+export function Canvas({ ambient = true, mood = "calm", className, children, ...rest }: CanvasProps) {
   return (
-    <div className={cx(styles.canvas, className)} {...rest}>
+    <div className={cx(styles.canvas, className)} data-bio-mood={mood} {...rest}>
       <div className={styles.environment} aria-hidden="true">
         {ambient && (
           <>

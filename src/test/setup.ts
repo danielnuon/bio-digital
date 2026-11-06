@@ -9,3 +9,4 @@ class RO {
   disconnect() {}
 }
 (globalThis as { ResizeObserver?: unknown }).ResizeObserver ??= RO;
+window.scrollTo = (() => {}) as typeof window.scrollTo;

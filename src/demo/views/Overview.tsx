@@ -1,79 +1,109 @@
 import { useRef, useState } from "react";
-import { AnimatePresence, LayoutGroup } from "motion/react";
 import {
   Button,
   Card,
+  CardStack,
   Chart,
+  ControlTile,
   DataPanel,
-  Gauge,
   List,
   Metric,
   Modal,
-  OrganicShape,
-  SegmentedControl,
+  Rings,
   Slider,
   StatusIndicator,
   Surface,
   TabPanel,
   Tabs,
-  Toggle,
   useBio,
   useDensityAtLeast,
-  useToast,
+  useIsland,
 } from "../../bio";
-import { energySeries, greeting, initialAlerts, rangeLabels, useLiveReadings, zones, type Range, type Zone } from "../data";
-import { IconBolt, IconDrop, IconLeaf, IconSpark, IconWind, IconZones } from "../icons";
+import { energySeries, greeting, initialAlerts, rangeLabels, zones, type Alert, type LiveReadings, type Range, type Zone } from "../data";
+import { IconBolt, IconDrop, IconLeaf, IconSpark, IconSun, IconThermo, IconWind, IconZones, IconMoon } from "../icons";
+import { Orb } from "../Orb";
 import type { View } from "../App";
 import s from "../demo.module.css";
 
 const kw = (v: number) => v.toFixed(1);
 
-export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
+interface Props {
+  onNavigate: (v: View) => void;
+  live: LiveReadings;
+  alerts: Alert[];
+  setAlerts: (a: Alert[] | ((p: Alert[]) => Alert[])) => void;
+}
+
+export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
   const { density } = useBio();
   const immersed = useDensityAtLeast("immersed");
-  const notify = useToast();
-  const live = useLiveReadings();
+  const island = useIsland();
   const [range, setRange] = useState<Range>("24h");
-  const [alerts, setAlerts] = useState(initialAlerts);
   const [zone, setZone] = useState<Zone | null>(null);
   const zoneOrigin = useRef<HTMLElement | null>(null);
-  const [circadian, setCircadian] = useState(true);
-  const [irrigation, setIrrigation] = useState(true);
-  const [purge, setPurge] = useState(false);
+  const [tiles, setTiles] = useState({ circadian: true, irrigation: true, boost: false, purge: false });
   const [target, setTarget] = useState(21.5);
-  const [vent, setVent] = useState<"eco" | "balanced" | "boost">("balanced");
 
   const { use, solar } = energySeries(range);
-  const net = use.reduce((a, b) => a + b, 0) - solar.reduce((a, b) => a + b, 0);
-  const selfSupplied = Math.round((solar.reduce((a, b) => a + b, 0) / use.reduce((a, b) => a + b, 0)) * 100);
+  const sum = (a: number[]) => a.reduce((x, y) => x + y, 0);
+  const selfSupplied = Math.round((sum(solar) / sum(use)) * 100);
+  const net = sum(use) - sum(solar);
+  const attention = alerts.filter((a) => a.status !== "success").length;
+
+  const toggle = (key: keyof typeof tiles, label: string) => (on: boolean) => {
+    setTiles((t) => ({ ...t, [key]: on }));
+    island({ title: `${label} ${on ? "on" : "off"}`, status: on ? "success" : "idle", duration: 1800 });
+  };
 
   return (
     <div className={s.grid}>
-      <Surface as="section" aria-labelledby="hero-t" material="porcelain" depth={2} radius="organic" className={`${s.hero} ${s.span12}`}>
-        <OrganicShape className={s.heroShape} seed={3} size={320} fill="var(--bio-accent-soft)" />
-        <OrganicShape className={s.heroShape2} seed={8} size={220} fill="color-mix(in srgb, var(--bio-color-air) 28%, transparent)" />
+      {/* Hero: the habitat's pulse. Its light follows the environment's mood. */}
+      <Surface as="section" aria-labelledby="hero-t" material="porcelain" depth={2} radius="r6" className={`${s.hero} ${s.span8}`} lit>
         <div className={s.heroText}>
-          <StatusIndicator status="success" label="All essential systems steady" variant="pill" />
+          <StatusIndicator
+            status={attention ? "warning" : "success"}
+            label={attention ? `${attention} signal${attention > 1 ? "s" : ""} need you` : "All systems steady"}
+            variant="pill"
+          />
           <h2 id="hero-t" className={s.heroTitle}>
-            {greeting()}. The habitat is calm.
+            {greeting()}.
+            <br />
+            <span className={s.heroAccent}>{attention ? "The habitat needs a hand." : "The habitat is calm."}</span>
           </h2>
           <p className={s.heroBody}>
-            Solar is covering {selfSupplied}% of demand. Two zones would like your attention.
-            {density !== "ambient" && " Change the density in the top bar to see how much the dashboard reveals."}
+            Solar covers {selfSupplied}% of today's demand.
+            {density !== "ambient" && ` Air is ${live.air > 90 ? "excellent" : "good"}, and the cistern is ${Math.round((live.water / 2900) * 100)}% full.`}
           </p>
+          <div className={s.heroActions}>
+            <Button size="large" icon={<IconZones />} onClick={() => onNavigate("zones")}>
+              Review zones
+            </Button>
+            <Button size="large" variant="secondary" icon={<IconMoon />} onClick={() => island({ title: "Evening scene scheduled", description: "Lights warm to 2700 K at 19:30.", status: "success" })}>
+              Evening scene
+            </Button>
+          </div>
         </div>
-        <div className={s.heroActions}>
-          <Button icon={<IconZones />} onClick={() => onNavigate("zones")}>
-            Review zones
-          </Button>
-          <Button variant="secondary" onClick={() => notify({ title: "Evening scene scheduled", description: "Lights warm to 2700 K at 19:30.", status: "success" })}>
-            Schedule evening scene
-          </Button>
+        <div className={s.heroOrb}>
+          <Orb size={260} />
         </div>
       </Surface>
 
+      <Card className={`${s.span4} ${s.ringsCard}`} material="crystal" depth={2} radius="r6" eyebrow="Today" title="Living balance" headingLevel={2}>
+        <Rings
+          label="Living balance"
+          centerValue={`${selfSupplied}%`}
+          centerLabel="solar"
+          size={184}
+          rings={[
+            { id: "solar", label: "Solar coverage", value: selfSupplied / 100, valueText: `${selfSupplied}%`, colors: ["#9fdcbc", "#2f7351"] },
+            { id: "air", label: "Air quality", value: live.air / 100, valueText: `${Math.round(live.air)} / 100`, colors: ["#c5d3f0", "#4a6aae"] },
+            { id: "water", label: "Cistern", value: live.water / 2900, valueText: `${Math.round((live.water / 2900) * 100)}%`, colors: ["#b6dde0", "#2c6f78"] },
+          ]}
+        />
+      </Card>
+
       {/* Key metrics */}
-      <Card className={s.span3} depth={1} interactive>
+      <Card className={s.span3} depth={1} interactive radius="r5">
         <Metric
           label="Power draw"
           icon={<IconBolt />}
@@ -86,7 +116,7 @@ export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
           analysis="Peak 58.3 kW at 13:10. HVAC 46%, lighting 18%, plug loads 36%."
         />
       </Card>
-      <Card className={s.span3} depth={1} interactive>
+      <Card className={s.span3} depth={1} interactive radius="r5">
         <Metric
           label="Solar yield"
           icon={<IconSpark />}
@@ -100,7 +130,7 @@ export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
           analysis="Battery wall 78% charged; 12.4 kWh stored since noon."
         />
       </Card>
-      <Card className={s.span3} depth={1} interactive>
+      <Card className={s.span3} depth={1} interactive radius="r5">
         <Metric
           label="Air quality"
           icon={<IconWind />}
@@ -113,7 +143,7 @@ export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
           analysis="North studio CO₂ peaked at 790 ppm at 11:45; ventilation responded within 40 s."
         />
       </Card>
-      <Card className={s.span3} depth={1} interactive>
+      <Card className={s.span3} depth={1} interactive radius="r5">
         <Metric
           label="Rain harvested"
           icon={<IconDrop />}
@@ -122,14 +152,14 @@ export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
           unit="L"
           delta={{ value: "1,840 L", direction: "up", positive: true, label: "since last night" }}
           trend={live.trendWater}
-          trendColor="var(--bio-color-water)"
+          trendColor="#2c6f78"
           detail="Cistern 64% full."
           analysis="Inflow 6.2 L/min. Overflow diverter engages at 92%."
         />
       </Card>
 
       {/* Energy chart */}
-      <Card className={s.span8} title="Energy flow" eyebrow="Demand and generation" headingLevel={2} depth={1}>
+      <Card className={s.span8} title="Energy flow" eyebrow="Demand and generation" headingLevel={2} depth={1} radius="r5">
         <div className={s.chartHead}>
           <div className={s.chartStats}>
             <span>
@@ -149,58 +179,46 @@ export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
             value={range}
             onChange={setRange}
             items={[
-              { value: "24h", label: "24 hours" },
+              { value: "24h", label: "24 h" },
               { value: "7d", label: "7 days" },
               { value: "30d", label: "30 days" },
             ]}
           />
         </div>
-        <TabPanel idBase="energy" value={range} style={{ marginTop: "var(--bio-space-4)" }}>
+        <TabPanel idBase="energy" value={range} style={{ marginTop: "var(--bio-space-4)", outline: "none" }}>
           <Chart
             title={`Energy flow, ${range === "24h" ? "last 24 hours" : range === "7d" ? "last 7 days" : "last 30 days"}`}
             summary={`Demand ranges ${Math.min(...use)} to ${Math.max(...use)} kW; solar peaks at ${Math.max(...solar)} kW.`}
             labels={rangeLabels[range]}
             format={(v) => `${v.toFixed(0)} kW`}
             min={0}
-            height={density === "immersed" ? 260 : 220}
+            height={density === "immersed" ? 280 : 240}
             series={[
-              { id: "use", label: "Demand", data: use, color: "var(--bio-accent-ink)" },
-              { id: "solar", label: "Solar", data: solar, color: "var(--bio-warning-ink)", dashed: true },
+              { id: "use", label: "Demand", data: use, color: "var(--bio-accent-ink)", gradient: ["#6fb1b8", "#2f7351"], glow: true },
+              { id: "solar", label: "Solar", data: solar, color: "var(--bio-warning-ink)", dashed: true, area: false },
             ]}
           />
         </TabPanel>
       </Card>
 
-      {/* Air & climate */}
-      <div className={s.span4} style={{ display: "flex", flexDirection: "column", gap: "var(--bio-density-gap)" }}>
-        <Card title="Breathing room" eyebrow="Indoor air" headingLevel={2} material="crystal" depth={2}>
-          <div className={s.airRow}>
-            <Gauge value={live.air} label="AQI score" valueText={`${Math.round(live.air)}`} />
-            <div className={s.airFacts}>
-              <StatusIndicator status="success" label="Excellent" />
-              <span className={s.muted}>Crystal marks the one surface that deserves emphasis here.</span>
-            </div>
-          </div>
-        </Card>
-        <DataPanel
-          title="Climate detail"
-          eyebrow="Atrium"
-          headingLevel={2}
-          footnote="Updated just now"
-          items={[
-            { label: "Temperature", value: "22.4 °C" },
-            { label: "Humidity", value: "58%" },
-            { label: "CO₂", value: "512 ppm", level: "engaged" },
-            { label: "Light", value: "780 lux", level: "engaged" },
-            { label: "VOC index", value: "41", level: "immersed" },
-            { label: "Dew point", value: "13.7 °C", level: "immersed" },
-            { label: "Air changes", value: "4.2 / h", level: "immersed" },
-          ]}
-        />
-      </div>
+      {/* Control centre */}
+      <section className={`${s.span4} ${s.controlCentre}`} aria-labelledby="cc-t">
+        <h2 id="cc-t" className="bio-visually-hidden">
+          Controls
+        </h2>
+        <div className={s.tileGrid}>
+          <ControlTile label="Circadian light" icon={<IconSun />} on={tiles.circadian} onChange={toggle("circadian", "Circadian light")} status={tiles.circadian ? "Following the sun" : "Off"} />
+          <ControlTile label="Irrigation" icon={<IconDrop />} on={tiles.irrigation} onChange={toggle("irrigation", "Irrigation")} fill="var(--bio-fill-water)" ink="#2c6f78" status={tiles.irrigation ? "On demand" : "Paused"} />
+          <ControlTile label="Fresh air" icon={<IconWind />} on={tiles.boost} onChange={toggle("boost", "Fresh air boost")} fill="var(--bio-fill-air)" ink="#4a6aae" status={tiles.boost ? "Boosting" : "Balanced"} />
+          <ControlTile label="Night purge" icon={<IconMoon />} on={tiles.purge} onChange={toggle("purge", "Night purge")} fill="var(--bio-fill-earth)" ink="#7a5f22" status={tiles.purge ? "Tonight" : "Off"} />
+        </div>
+        <Surface material="membrane" depth={1} radius="r5" padding="md">
+          <Slider variant="capsule" icon={<IconThermo />} label="Comfort target" min={18} max={26} step={0.5} value={target} onChange={setTarget} format={(v) => `${v.toFixed(1)} °C`} />
+        </Surface>
+      </section>
 
       {/* Zones */}
-      <Card className={s.span6} title="Zones" eyebrow={`${zones.length} monitored`} headingLevel={2} actions={<Button variant="tertiary" size="compact" onClick={() => onNavigate("zones")}>View all</Button>}>
+      <Card className={s.span7} title="Zones" eyebrow={`${zones.length} monitored`} headingLevel={2} radius="r5" actions={<Button variant="tertiary" size="compact" onClick={() => onNavigate("zones")}>View all</Button>}>
         <List
           label="Zones"
           onSelect={(id) => {
@@ -210,7 +228,7 @@ export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
           items={zones.slice(0, density === "ambient" ? 4 : zones.length).map((z) => ({
             id: z.id,
             leading: (
-              <span className={s.zoneDot}>
+              <span className={s.zoneDot} data-status={z.status}>
                 <IconLeaf />
               </span>
             ),
@@ -222,56 +240,27 @@ export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
         />
       </Card>
 
-      {/* Controls */}
-      <Card className={s.span6} title="Systems" eyebrow="Direct control" headingLevel={2}>
-        <div className={s.controlsStack}>
-          <Toggle spread label="Circadian lighting" description="Follows the sun's colour temperature." checked={circadian} onChange={setCircadian} />
-          <Toggle spread label="Smart irrigation" description="Waters only when soil asks for it." checked={irrigation} onChange={setIrrigation} />
-          {immersed && (
-            <Toggle spread label="Night purge ventilation" description="Pre-cools the building with outside air overnight." checked={purge} onChange={setPurge} />
-          )}
-          <div className={s.prefGroup} style={{ paddingBlock: "var(--bio-space-2)" }}>
-            <span aria-hidden="true" style={{ fontSize: "var(--bio-type-supporting)", fontWeight: 500 }}>
-              Ventilation mode
-            </span>
-            <SegmentedControl
-              label="Ventilation mode"
-              value={vent}
-              onChange={setVent}
-              options={[
-                { value: "eco", label: "Eco" },
-                { value: "balanced", label: "Balanced" },
-                { value: "boost", label: "Boost" },
-              ]}
-            />
-          </div>
-          <Slider label="Comfort target" min={18} max={26} step={0.5} value={target} onChange={setTarget} format={(v) => `${v.toFixed(1)} °C`} />
-        </div>
-      </Card>
-
-      {/* Alerts: drag to dismiss, neighbours resolve into the gap */}
-      <section className={s.span12} aria-labelledby="alerts-t">
-        <div className={s.sectionHead}>
-          <div>
+      <div className={`${s.span5} ${s.sideColumn}`}>
+        <section aria-labelledby="alerts-t">
+          <div className={s.sectionHead}>
             <h2 id="alerts-t" className={s.h2}>
               Signals
             </h2>
-            <p className={`${s.p} ${s.muted} ${s.small}`}>Swipe a signal away, or press its × button. A fast flick needs less distance.</p>
+            {alerts.length < initialAlerts.length && (
+              <Button variant="tertiary" size="compact" onClick={() => setAlerts(initialAlerts)}>
+                Restore
+              </Button>
+            )}
           </div>
-          {alerts.length < initialAlerts.length && (
-            <Button variant="tertiary" size="compact" onClick={() => setAlerts(initialAlerts)}>
-              Restore signals
-            </Button>
-          )}
-        </div>
-        <LayoutGroup>
-          <div className={s.alerts}>
-            <AnimatePresence mode="popLayout">
-              {alerts.map((a) => (
+          <CardStack
+            label="Signals"
+            items={alerts.map((a) => ({
+              id: a.id,
+              content: (
                 <Card
-                  key={a.id}
-                  layout
                   depth={2}
+                  radius="r5"
+                  material="porcelain"
                   title={a.title}
                   headingLevel={3}
                   onDismiss={() => setAlerts((l) => l.filter((x) => x.id !== a.id))}
@@ -283,16 +272,33 @@ export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
                     <span>{a.time}</span>
                   </div>
                 </Card>
-              ))}
-              {alerts.length === 0 && (
-                <Surface key="empty" material="porcelain" depth={0} radius="r4" className={s.empty}>
-                  Nothing needs you right now. The habitat is resting.
-                </Surface>
-              )}
-            </AnimatePresence>
-          </div>
-        </LayoutGroup>
-      </section>
+              ),
+            }))}
+            empty={
+              <Surface material="membrane" depth={0} radius="r5" className={s.empty}>
+                Nothing needs you right now. The habitat is resting.
+              </Surface>
+            }
+          />
+        </section>
+        {immersed && (
+          <DataPanel
+            title="Climate detail"
+            eyebrow="Atrium"
+            headingLevel={2}
+            radius="r5"
+            footnote="Updated just now"
+            items={[
+              { label: "Temperature", value: "22.4 °C" },
+              { label: "Humidity", value: "58%" },
+              { label: "CO₂", value: "512 ppm" },
+              { label: "Light", value: "780 lux" },
+              { label: "VOC index", value: "41" },
+              { label: "Dew point", value: "13.7 °C" },
+            ]}
+          />
+        )}
+      </div>
 
       <Modal
         open={!!zone}
@@ -307,7 +313,7 @@ export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
             </Button>
             <Button
               onClick={() => {
-                notify({ title: `${zone?.name} pinned`, description: "It will stay at the top of your overview.", status: "success" });
+                island({ title: `${zone?.name} pinned`, description: "It stays at the top of your overview.", status: "success" });
                 setZone(null);
               }}
             >
@@ -326,7 +332,7 @@ export function Overview({ onNavigate }: { onNavigate: (v: View) => void }) {
                 ["CO₂", zone.co2 ? `${zone.co2} ppm` : "—"],
                 ["Occupancy", `${zone.occupancy}`],
               ].map(([k, v]) => (
-                <Surface key={k} material="porcelain" depth={0} radius="r3" className={s.statTile}>
+                <Surface key={k} material="porcelain" depth={0} className={`${s.statTile} bio-concentric`}>
                   <span className={`${s.muted} ${s.small}`}>{k}</span>
                   <strong>{v}</strong>
                 </Surface>

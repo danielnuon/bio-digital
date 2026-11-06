@@ -94,3 +94,58 @@
 .input:disabled ~ .track {
   opacity: 0.5;
 }
+
+/* ── capsule variant: a thick, glanceable control-centre slider ──── */
+.capsule .control {
+  height: 56px;
+  margin-inline: 0;
+  padding-inline: 0;
+  overflow: visible;
+}
+.capsuleTrack {
+  position: relative;
+  width: 100%;
+  height: 56px;
+  border-radius: var(--bio-radius-pill);
+  background: color-mix(in srgb, var(--bio-text) 9%, transparent);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.08);
+  overflow: hidden;
+  isolation: isolate;
+}
+.capsuleFill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--bio-color-growth) 70%, transparent), var(--bio-color-growth));
+  box-shadow: inset -1px 0 0 rgb(255 255 255 / 0.6), 4px 0 16px -4px rgb(47 115 81 / 0.35);
+}
+[data-bio-environment="night"] .capsuleFill {
+  background: linear-gradient(90deg, rgb(127 196 160 / 0.55), rgb(167 207 186 / 0.95));
+}
+.capsuleIcon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  translate: 0 -50%;
+  display: inline-flex;
+  color: var(--bio-color-carbon);
+  pointer-events: none;
+  z-index: 1;
+}
+[data-bio-environment="night"] .capsuleIcon {
+  color: var(--bio-text);
+}
+.capsuleIcon svg {
+  width: 22px;
+  height: 22px;
+}
+.capsule .input {
+  height: 56px;
+}
+.capsule .input:focus-visible ~ .capsuleTrack {
+  outline: var(--bio-focus-width) solid var(--bio-focus);
+  outline-offset: var(--bio-focus-offset);
+}
+.capsule .input:disabled ~ .capsuleTrack {
+  opacity: 0.5;
+}

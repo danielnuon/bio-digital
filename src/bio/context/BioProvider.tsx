@@ -9,6 +9,8 @@ import {
   type ReactNode,
 } from "react";
 import { MotionConfig } from "motion/react";
+import { useMaterialLight } from "./useMaterialLight";
+import { detectDeviceCorners, type DeviceCorners } from "../utils/corners";
 import "../tokens/base.css";
 
 /**
@@ -40,6 +42,9 @@ export interface BioContextValue {
   spatialDepth: number;
   pushSpatialLayer: () => () => void;
   portalRoot: HTMLElement | null;
+  /** The screen's corner radius, so edge-hugging surfaces can be concentric. */
+  deviceCorners: DeviceCorners;
+  setDeviceRadius: (r: number | "auto") => void;
 }
 
 const BioContext = createContext<BioContextValue | null>(null);
@@ -74,6 +79,8 @@ export interface BioProviderProps {
   motion?: MotionPreference;
   /** Persist preferences under this localStorage key. */
   storageKey?: string;
+  /** Exact display corner radius in CSS px, when the host knows it (e.g. a native shell). */
+  deviceRadius?: number;
   className?: string;
 }
 
@@ -94,6 +101,7 @@ export function BioProvider({
   density: initialDensity = "engaged",
   motion: initialMotion = "system",
   storageKey,
+  deviceRadius,
   className,
 }: BioProviderProps) {
   const [stored] = useState(() => readStored(storageKey));
@@ -103,6 +111,17 @@ export function BioProvider({
   const [fidelityPref, setFidelity] = useState<Fidelity | "auto">(stored.fidelity ?? "auto");
   const [spatialDepth, setSpatialDepth] = useState(0);
   const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
+  const [rootEl, setRootEl] = useState<HTMLElement | null>(null);
+  const [detected, setDetected] = useState<DeviceCorners>({ radius: 0, source: "none", label: "Detecting" });
+  const [radiusOverride, setDeviceRadius] = useState<number | "auto">(deviceRadius ?? "auto");
+  useEffect(() => setDetected(detectDeviceCorners()), []);
+  const deviceCorners = useMemo<DeviceCorners>(
+    () =>
+      radiusOverride === "auto"
+        ? detected
+        : { radius: radiusOverride, source: "model", label: deviceRadius !== undefined ? "Provided by host" : "Set manually" },
+    [radiusOverride, detected, deviceRadius],
+  );
 
   const systemDark = useMediaQuery("(prefers-color-scheme: dark)");
   const systemReduced = useMediaQuery("(prefers-reduced-motion: reduce)");
@@ -111,6 +130,7 @@ export function BioProvider({
     environmentPreference === "system" ? (systemDark ? "night" : "day") : environmentPreference;
   const motion = motionPreference === "system" ? (systemReduced ? "reduced" : "organic") : motionPreference;
   const fidelity: Fidelity = fidelityPref === "auto" ? detectFidelity() : fidelityPref;
+  useMaterialLight(rootEl, fidelity === "full" && motion === "organic");
 
   useEffect(() => {
     if (!storageKey) return;
@@ -144,8 +164,10 @@ export function BioProvider({
       spatialDepth,
       pushSpatialLayer,
       portalRoot,
+      deviceCorners,
+      setDeviceRadius,
     }),
-    [environment, environmentPreference, density, motion, motionPreference, fidelity, spatialDepth, pushSpatialLayer, portalRoot],
+    [environment, environmentPreference, density, motion, motionPreference, fidelity, spatialDepth, pushSpatialLayer, portalRoot, deviceCorners],
   );
 
   return (
@@ -153,12 +175,15 @@ export function BioProvider({
       {/* MotionConfig makes every Motion component respect the resolved preference. */}
       <MotionConfig reducedMotion={motion === "reduced" ? "always" : "never"}>
         <div
+          ref={setRootEl}
           data-bio-root=""
           data-bio-environment={environment}
           data-bio-density={density}
           data-bio-motion={motion}
           data-bio-fidelity={fidelity}
           data-bio-spatial={spatialDepth > 0 ? "focused" : "idle"}
+          data-bio-device-corners={deviceCorners.radius > 0 ? "rounded" : "square"}
+          style={{ ["--bio-device-radius" as string]: `${deviceCorners.radius}px` }}
           className={className}
         >
           {children}

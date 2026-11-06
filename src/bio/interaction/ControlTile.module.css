@@ -1,0 +1,91 @@
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--bio-space-4);
+  min-height: 116px;
+  padding: var(--bio-space-4);
+  border: 1px solid transparent;
+  border-radius: var(--bio-radius-r4);
+  background: var(--bio-membrane-bg);
+  color: var(--bio-text);
+  box-shadow: var(--bio-depth-1), var(--bio-membrane-highlight);
+  -webkit-backdrop-filter: var(--bio-membrane-filter);
+  backdrop-filter: var(--bio-membrane-filter);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color var(--bio-duration-state) var(--bio-ease-settle);
+}
+[data-bio-fidelity="lite"] .tile {
+  background: var(--bio-membrane-bg-opaque);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--bio-rim);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* The "on" fill blooms from the icon, like light switching on. */
+.fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--_fill, var(--bio-fill-growth));
+}
+.tile[aria-pressed="true"] {
+  color: #fff;
+}
+[data-bio-environment="night"] .tile[aria-pressed="true"] {
+  color: var(--bio-color-carbon);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--bio-text) 8%, transparent);
+  color: var(--bio-text);
+  transition:
+    background-color var(--bio-duration-state) var(--bio-ease-settle),
+    color var(--bio-duration-state) var(--bio-ease-settle);
+}
+.tile[aria-pressed="true"] .icon {
+  background: rgb(255 255 255 / 0.95);
+  color: var(--_ink, #2f7351);
+  box-shadow: 0 4px 12px -4px rgb(0 0 0 / 0.25);
+}
+.icon svg {
+  width: 20px;
+  height: 20px;
+}
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.label {
+  font-size: var(--bio-type-supporting);
+  font-weight: var(--bio-weight-semibold);
+  letter-spacing: -0.01em;
+}
+.state {
+  font-size: var(--bio-type-caption);
+  opacity: 0.78;
+}

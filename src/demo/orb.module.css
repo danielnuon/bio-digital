@@ -1,0 +1,80 @@
+.orb {
+  position: relative;
+  flex-shrink: 0;
+  isolation: isolate;
+  max-width: 100%;
+}
+.blob {
+  position: absolute;
+  inset: 6%;
+  border-radius: 46% 54% 58% 42% / 44% 46% 54% 56%;
+  will-change: transform;
+  mix-blend-mode: normal;
+}
+.b1 {
+  background: radial-gradient(circle at 30% 30%, var(--bio-mood-a), transparent 72%);
+  animation: wobble1 11s var(--bio-ease-ambient) infinite alternate;
+}
+.b2 {
+  inset: 10%;
+  background: radial-gradient(circle at 70% 40%, var(--bio-mood-b), transparent 70%);
+  animation: wobble2 13s var(--bio-ease-ambient) infinite alternate;
+}
+.b3 {
+  inset: 14%;
+  background: radial-gradient(circle at 45% 75%, var(--bio-mood-c), transparent 70%);
+  animation: wobble3 17s var(--bio-ease-ambient) infinite alternate;
+}
+.core {
+  position: absolute;
+  inset: 24%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 28%, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.2) 30%, transparent 52%),
+    radial-gradient(circle at 70% 75%, var(--bio-mood-c), transparent 60%),
+    radial-gradient(circle at 40% 60%, var(--bio-mood-b), transparent 70%),
+    var(--bio-mood-a);
+  box-shadow:
+    inset 0 -14px 30px -10px rgb(0 0 0 / 0.12),
+    0 20px 50px -18px var(--bio-mood-a);
+  animation: breathe 6s var(--bio-ease-ambient) infinite alternate;
+}
+.gloss {
+  position: absolute;
+  inset: 24%;
+  border-radius: 50%;
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.55), transparent 40%);
+  mix-blend-mode: soft-light;
+}
+[data-bio-environment="night"] .core {
+  background:
+    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0.08) 35%, transparent 60%),
+    radial-gradient(circle at 50% 55%, var(--bio-mood-a), transparent 75%);
+}
+@keyframes wobble1 {
+  to {
+    transform: rotate(40deg) scale(1.06);
+    border-radius: 58% 42% 44% 56% / 52% 58% 42% 48%;
+  }
+}
+@keyframes wobble2 {
+  to {
+    transform: rotate(-35deg) scale(0.95) translate(4%, -3%);
+    border-radius: 40% 60% 52% 48% / 58% 42% 58% 42%;
+  }
+}
+@keyframes wobble3 {
+  to {
+    transform: rotate(25deg) scale(1.08) translate(-4%, 3%);
+    border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%;
+  }
+}
+@keyframes breathe {
+  to {
+    transform: scale(1.04);
+  }
+}
+[data-bio-motion="reduced"] .blob,
+[data-bio-motion="reduced"] .core {
+  animation: none;
+}

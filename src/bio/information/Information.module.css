@@ -39,7 +39,8 @@
 .cardTitle {
   margin: 0;
   font-size: var(--bio-type-title);
-  font-weight: var(--bio-weight-semibold);
+  font-weight: var(--bio-weight-bold);
+  letter-spacing: var(--bio-tracking-title);
   line-height: var(--bio-leading-snug);
 }
 .cardActions {
@@ -170,7 +171,21 @@
   align-items: center;
   gap: var(--bio-space-2);
   font-size: var(--bio-type-supporting);
+  font-weight: var(--bio-weight-medium);
   color: var(--bio-text-muted);
+}
+.metricIcon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--_tint, var(--bio-accent-ink)) 14%, transparent);
+  color: var(--_tint, var(--bio-accent-ink));
+}
+.metricIcon svg {
+  width: 17px;
+  height: 17px;
 }
 .metricValueRow {
   display: flex;
@@ -179,11 +194,11 @@
   flex-wrap: wrap;
 }
 .metricValue {
-  font-family: var(--bio-font-display);
+  font-family: var(--bio-font-rounded);
   font-size: var(--bio-type-h1);
-  font-weight: var(--bio-weight-semibold);
+  font-weight: var(--bio-weight-bold);
   line-height: var(--bio-leading-tight);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--bio-tracking-display);
   font-variant-numeric: tabular-nums;
 }
 [data-bio-density="ambient"] .metricValue {
@@ -225,7 +240,7 @@
 .spark {
   display: block;
   width: 100%;
-  height: 40px;
+  height: 48px;
   margin-top: var(--bio-space-2);
   overflow: visible;
 }
@@ -268,9 +283,38 @@
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
+.glow {
+  fill: none;
+  stroke-width: 6;
+  opacity: 0.45;
+  vector-effect: non-scaling-stroke;
+}
+.endpoint {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--_c);
+  border: 2.5px solid var(--bio-porcelain-solid);
+  box-shadow: 0 0 0 0 var(--_c);
+  pointer-events: none;
+}
+.endpoint::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--_c);
+  opacity: 0;
+  animation: pulse 2.8s var(--bio-ease-ambient) infinite;
+}
+[data-bio-motion="reduced"] .endpoint::after {
+  animation: none;
+}
 .line {
   fill: none;
-  stroke-width: 2.5;
+  stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
@@ -297,7 +341,7 @@
   height: 12px;
   margin: -6px 0 0 -6px;
   border-radius: 50%;
-  border: 2.5px solid var(--bio-porcelain-bg);
+  border: 2.5px solid var(--bio-porcelain-solid);
   box-shadow: var(--bio-depth-2);
   pointer-events: none;
 }

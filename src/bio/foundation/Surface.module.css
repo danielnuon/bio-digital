@@ -16,12 +16,27 @@
   box-shadow: var(--_depth), var(--bio-porcelain-highlight);
 }
 
+/* Membrane: refractive glass with a light rim brightest where the light
+   source (top-left) meets it. The rim is a masked gradient border. */
 .membrane {
   background: var(--bio-membrane-bg);
-  border: 1px solid var(--bio-membrane-border);
+  border: 1px solid transparent;
   box-shadow: var(--_depth), var(--bio-membrane-highlight);
-  -webkit-backdrop-filter: blur(var(--bio-membrane-blur)) saturate(1.4);
-  backdrop-filter: blur(var(--bio-membrane-blur)) saturate(1.4);
+  -webkit-backdrop-filter: var(--bio-membrane-filter);
+  backdrop-filter: var(--bio-membrane-filter);
+}
+.membrane::before,
+.crystal::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--bio-rim);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .membrane {
@@ -36,38 +51,62 @@
 
 .crystal {
   background: var(--bio-crystal-bg);
-  border: 1px solid var(--bio-crystal-border);
+  border: 1px solid transparent;
   box-shadow: var(--_depth), var(--bio-crystal-highlight);
-  overflow: hidden;
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
 }
-/* Controlled reflection: the sheen responds to proximity, never loops. */
-.crystal::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--bio-crystal-sheen);
-  background-size: 250% 100%;
-  background-position: 100% 0;
-  opacity: 0.6;
-  pointer-events: none;
-  transition:
-    background-position var(--bio-duration-spatial) var(--bio-ease-settle),
-    opacity var(--bio-duration-state) var(--bio-ease-settle);
+.crystal::before {
+  background: var(--bio-crystal-rim);
 }
-.crystal:hover::after,
-.crystal:focus-within::after {
-  background-position: 0% 0;
-  opacity: 1;
+[data-bio-fidelity="lite"] .crystal {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .carbon {
   background: var(--bio-carbon-bg);
   border: 1px solid var(--bio-carbon-border);
-  box-shadow: var(--_depth);
+  box-shadow: var(--_depth), inset 0 1px 0 rgb(255 255 255 / 0.06);
 }
-.carbon[data-bio-carbon-parent="day"] {
-  background: var(--bio-color-carbon);
+
+/* Material life (§3.7, §14.1): a specular highlight follows the pointer
+   across lit surfaces. Position is written to CSS variables by one shared,
+   frame-throttled listener (see context/useMaterialLight). */
+.lit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    280px circle at var(--bio-mx, 50%) var(--bio-my, -40%),
+    var(--bio-light-color),
+    transparent 62%
+  );
+  opacity: 0;
+  mix-blend-mode: soft-light;
+  transition: opacity var(--bio-duration-surface) var(--bio-ease-settle);
+}
+.membrane.lit::after,
+.crystal.lit::after,
+.carbon.lit::after {
+  mix-blend-mode: normal;
+}
+.lit:hover::after {
+  opacity: var(--bio-light-strength);
+}
+.carbon.lit::after {
+  background: radial-gradient(280px circle at var(--bio-mx, 50%) var(--bio-my, -40%), rgb(127 196 160 / 0.16), transparent 62%);
+}
+@media (hover: none) {
+  .lit::after {
+    display: none;
+  }
+}
+:global([data-bio-motion="reduced"]) .lit::after,
+:global([data-bio-fidelity="lite"]) .lit::after {
+  display: none;
 }
 
 /* ── depth (§8) ─────────────────────────────────────────────── */

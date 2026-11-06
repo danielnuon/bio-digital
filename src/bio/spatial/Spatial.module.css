@@ -103,11 +103,27 @@
   touch-action: pan-y;
 }
 .drawer[data-side="bottom"] {
-  left: var(--bio-space-3);
-  right: var(--bio-space-3);
-  bottom: var(--bio-space-3);
+  left: var(--bio-edge-gap);
+  right: var(--bio-edge-gap);
+  bottom: var(--bio-edge-gap);
   max-height: 80dvh;
   touch-action: pan-x;
+  border-radius: max(var(--bio-radius-r5), calc(var(--bio-device-radius) - var(--bio-edge-gap)));
+  padding-bottom: max(var(--bio-space-6), env(safe-area-inset-bottom, 0px));
+}
+
+/* On phones a modal becomes a sheet whose corners follow the screen's. */
+@media (max-width: 560px) {
+  .layer {
+    place-items: end stretch;
+    padding: var(--bio-edge-gap);
+  }
+  .modal {
+    width: 100%;
+    border-radius: max(var(--bio-radius-r5), calc(var(--bio-device-radius) - var(--bio-edge-gap)));
+    padding: var(--bio-space-6);
+    padding-bottom: max(var(--bio-space-6), env(safe-area-inset-bottom, 0px));
+  }
 }
 .grip {
   align-self: center;

@@ -61,3 +61,15 @@ export { Popover } from "./spatial/Popover";
 export { FloatingPanel } from "./spatial/FloatingPanel";
 export { ToastProvider, useToast } from "./spatial/Toast";
 export type { ToastInput } from "./spatial/Toast";
+
+// Refinement pass: signature components and device-aware geometry
+export { Rings } from "./information/Rings";
+export type { Ring } from "./information/Rings";
+export { CardStack } from "./information/CardStack";
+export type { CardStackItem } from "./information/CardStack";
+export { ControlTile } from "./interaction/ControlTile";
+export { IslandProvider, useIsland } from "./spatial/Island";
+export type { IslandMessage } from "./spatial/Island";
+export { detectDeviceCorners, continuousRectPath } from "./utils/corners";
+export type { DeviceCorners } from "./utils/corners";
+export { useContinuousCorners } from "./utils/hooks";

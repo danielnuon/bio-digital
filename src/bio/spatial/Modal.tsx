@@ -5,7 +5,7 @@ import { useBio } from "../context/BioProvider";
 import { surfaceClass } from "../foundation/Surface";
 import type { Material } from "../physics/physics";
 import { useBioMotion } from "../physics/useBioMotion";
-import { useFocusTrap } from "../utils/hooks";
+import { readRadius, useContinuousCorners, useFocusTrap } from "../utils/hooks";
 import { cx } from "../utils/cx";
 import styles from "./Spatial.module.css";
 
@@ -53,6 +53,7 @@ export function Modal({ open, onClose, title, description, children, footer, ori
   const [origin, setOrigin] = useState({ x: 0, y: 0 });
 
   useSpatialLayer(open);
+  useContinuousCorners(panel, readRadius, open);
   useFocusTrap(open, panel, initialFocusRef);
 
   useLayoutEffect(() => {

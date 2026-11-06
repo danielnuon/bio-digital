@@ -1,3 +1,4 @@
+import { continuousRectPath } from "./corners";
 import { useEffect, useRef, type RefObject } from "react";
 
 const FOCUSABLE =
@@ -75,3 +76,39 @@ export function useFocusTrap(active: boolean, ref: RefObject<HTMLElement | null>
   }, [active]);
 }
 
+
+
+const supportsCornerShape = () => typeof CSS !== "undefined" && CSS.supports?.("corner-shape", "superellipse(2)");
+
+/**
+ * Continuous corners for an element. Uses native `corner-shape` where the
+ * browser has it; elsewhere (Safari, Firefox) clips to a continuous-curve
+ * path that tracks the element's size. Clip-path removes outer shadows, so
+ * reserve this for chrome whose corners sit against the device's corners.
+ * `radius` may be a number or a function of the element (to read CSS vars).
+ */
+export function useContinuousCorners(ref: RefObject<HTMLElement | null>, radius: number | ((el: HTMLElement) => number), enabled = true) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !enabled) return;
+    if (supportsCornerShape()) {
+      el.style.setProperty("corner-shape", "superellipse(1.6)");
+      return () => el.style.removeProperty("corner-shape");
+    }
+    if (typeof ResizeObserver === "undefined") return;
+    const apply = () => {
+      const r = typeof radius === "function" ? radius(el) : radius;
+      el.style.clipPath = `path("${continuousRectPath(el.offsetWidth, el.offsetHeight, r)}")`;
+    };
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    apply();
+    return () => {
+      ro.disconnect();
+      el.style.clipPath = "";
+    };
+  }, [ref, radius, enabled]);
+}
+
+/** Read an element's computed corner radius (resolves CSS variables). */
+export const readRadius = (el: HTMLElement) => parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;

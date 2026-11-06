@@ -64,6 +64,14 @@ import "bio-digital/styles.css";
 | §19.3 Fidelity | `data-bio-fidelity="lite"` (detected from Save-Data or low memory, or set by the user) drops backdrop blur and ambient forms. `prefers-reduced-transparency` makes membranes opaque. |
 | §20 Performance | Animations use transform and opacity. Animated numbers and the slider write to motion values, not React state. Backdrop blur is limited to membrane surfaces. |
 
+## Device-aware corners
+
+Edge chrome (the dock, bottom sheets, drawers) is drawn concentric with the device's physical display corner. `detectDeviceCorners()` estimates the iPhone display radius from the screen size, and hosts that know the exact value can pass `<BioProvider deviceRadius={...}>`. Continuous (squircle) curves use `corner-shape` where it is supported, and a `clip-path` fallback otherwise. See [docs/design-review.md](docs/design-review.md) for the method and its limits.
+
+## Design review
+
+[docs/design-review.md](docs/design-review.md) audits v1 against the spec, angle by angle: what the spec intended, what v1 showed, the pain point, and the v2 change.
+
 ## Documented exceptions (§22.6)
 
 - **Functional colours as text.** The §6.3 hues measure 2.9–4.3:1 on Cloud, below the WCAG AA 4.5:1 text threshold. They're kept for fills and indicators. Text uses `--bio-*-ink` variants with the same hue and meaning at 4.5:1 or better in each environment (for example `#A8423F` for Critical on day).

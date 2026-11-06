@@ -36,7 +36,11 @@ export function Metric({ label, value, format, unit, delta, trend, trendColor, i
   return (
     <div className={cx(styles.metric, className)}>
       <span className={styles.metricLabel}>
-        {icon && <span aria-hidden="true" style={{ display: "inline-flex" }}>{icon}</span>}
+        {icon && (
+          <span aria-hidden="true" className={styles.metricIcon} style={trendColor ? ({ ["--_tint" as string]: trendColor }) : undefined}>
+            {icon}
+          </span>
+        )}
         {label}
       </span>
       <span className={styles.metricValueRow}>

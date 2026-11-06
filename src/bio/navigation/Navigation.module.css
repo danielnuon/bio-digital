@@ -282,3 +282,85 @@
   margin: var(--bio-space-1) var(--bio-space-2);
   background: var(--bio-divider);
 }
+
+/* ── dock variant: a floating glass capsule ─────────────────────── */
+.dock {
+  padding: 8px;
+  /* concentric with the screen corner when docked against it */
+  border-radius: max(var(--bio-radius-r5), calc(var(--bio-device-radius) - var(--bio-edge-gap)));
+  --bio-outer-radius: max(var(--bio-radius-r5), calc(var(--bio-device-radius) - var(--bio-edge-gap)));
+  --bio-outer-pad: 8px;
+  background: var(--bio-membrane-bg);
+  border: 1px solid var(--bio-membrane-border);
+  box-shadow: var(--bio-depth-3), var(--bio-membrane-highlight);
+  -webkit-backdrop-filter: var(--bio-membrane-filter);
+  backdrop-filter: var(--bio-membrane-filter);
+}
+[data-bio-fidelity="lite"] .dock {
+  background: var(--bio-membrane-bg-opaque);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.dock .railList {
+  gap: 4px;
+}
+.dock .railItem {
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 72px;
+  min-height: 64px;
+  padding: 8px 4px;
+  /* inner = outer − padding, so items nest concentrically in the dock */
+  border-radius: max(var(--bio-radius-r3), calc(var(--bio-outer-radius) - var(--bio-outer-pad)));
+  font-size: 11px;
+  font-weight: var(--bio-weight-semibold);
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+.dock .railLabel {
+  flex: none;
+}
+.dock .railIcon svg {
+  width: 24px;
+  height: 24px;
+}
+.dock .railActive {
+  background: var(--bio-fill-growth);
+  box-shadow: 0 8px 20px -8px rgb(47 115 81 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.3);
+}
+.dock .railActive::before {
+  display: none;
+}
+.dock .railItem[aria-current="page"] {
+  color: #fff;
+}
+[data-bio-environment="night"] .dock .railItem[aria-current="page"] {
+  color: var(--bio-color-carbon);
+}
+.dock .railBadge {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  min-width: 18px;
+  line-height: 18px;
+  padding: 0 5px;
+  background: var(--bio-critical-fill);
+  color: var(--bio-on-critical);
+  box-shadow: 0 0 0 2px var(--bio-porcelain-solid);
+}
+@media (max-width: 760px) {
+  .dock[data-responsive="true"] .railList {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  .dock[data-responsive="true"] .railItem {
+    width: auto;
+    min-width: 64px;
+    flex: 1;
+    min-height: 56px;
+  }
+  .dock[data-responsive="true"] .railActive::before {
+    display: none;
+  }
+}

@@ -11,7 +11,7 @@ describe("demo dashboard", () => {
 
   it("renders the overview with no axe violations", async () => {
     const { container } = render(<App />);
-    expect(screen.getByRole("heading", { level: 1, name: "Overview" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1, name: "Habitat" })).toBeTruthy();
     // Colour contrast needs real layout; it is checked by hand against token values.
     const results = await axe.run(container, { rules: { "color-contrast": { enabled: false } } });
     expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
@@ -23,11 +23,23 @@ describe("demo dashboard", () => {
     act(() => {
       fireEvent.click(screen.getAllByLabelText("Night")[0]);
       fireEvent.click(screen.getAllByLabelText("Immersed")[0]);
+      fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
+    });
+    act(() => {
       fireEvent.click(screen.getAllByLabelText("Reduced")[0]);
     });
     expect(root.getAttribute("data-bio-environment")).toBe("night");
     expect(root.getAttribute("data-bio-density")).toBe("immersed");
     expect(root.getAttribute("data-bio-motion")).toBe("reduced");
+  });
+
+  it("announces through the island and dims nothing else", async () => {
+    render(<App />);
+    act(() => {
+      fireEvent.click(screen.getByRole("button", { name: /Irrigation/ }));
+    });
+    expect(screen.getByRole("button", { name: /Irrigation/ }).getAttribute("aria-pressed")).toBe("false");
+    expect(screen.getAllByRole("status").some((el) => /Irrigation off/.test(el.textContent ?? ""))).toBe(true);
   });
 
   it("every view renders without axe violations", async () => {

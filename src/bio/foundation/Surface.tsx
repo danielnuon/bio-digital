@@ -14,6 +14,8 @@ export interface SurfaceProps extends HTMLAttributes<HTMLElement> {
   depth?: Depth;
   radius?: Radius;
   padding?: Padding;
+  /** Specular highlight follows the pointer. Defaults on for membrane, crystal and carbon. */
+  lit?: boolean;
   children?: ReactNode;
 }
 
@@ -26,19 +28,23 @@ const padClass: Record<Padding, string> = {
 };
 
 /** Surface class names, for components that render their own element. */
-export function surfaceClass(material: Material = "porcelain", depth: Depth = 1, radius: Radius = "r3", padding: Padding = "none") {
-  return cx(styles.surface, styles[material], styles[`d${depth}`], styles[radius], padClass[padding]);
+export function surfaceClass(material: Material = "porcelain", depth: Depth = 1, radius: Radius = "r3", padding: Padding = "none", lit = false) {
+  return cx(styles.surface, styles[material], styles[`d${depth}`], styles[radius], padClass[padding], lit && styles.lit);
 }
+
+/** Attribute that opts an element into the shared pointer-light listener. */
+export const LIT = { "data-bio-light": "" } as const;
 
 /**
  * A material surface (§5). Porcelain is the default. Carbon re-scopes
  * semantic tokens to the night environment so content inside stays legible.
  */
 export const Surface = forwardRef<HTMLElement, SurfaceProps>(function Surface(
-  { as: Comp = "div", material = "porcelain", depth = 1, radius = "r3", padding = "none", className, ...rest },
+  { as: Comp = "div", material = "porcelain", depth = 1, radius = "r3", padding = "none", lit, className, ...rest },
   ref,
 ) {
   const { environment } = useBio();
+  const isLit = lit ?? material !== "porcelain";
   const carbonProps =
     material === "carbon" ? { "data-bio-environment": "night", "data-bio-carbon-parent": environment } : undefined;
   return (
@@ -46,7 +52,8 @@ export const Surface = forwardRef<HTMLElement, SurfaceProps>(function Surface(
       ref={ref}
       data-bio-material={material}
       data-bio-depth={`D${depth}`}
-      className={cx(surfaceClass(material, depth, radius, padding), className)}
+      className={cx(surfaceClass(material, depth, radius, padding, isLit), className)}
+      {...(isLit ? LIT : undefined)}
       {...carbonProps}
       {...rest}
     />

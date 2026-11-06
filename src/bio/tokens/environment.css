@@ -8,12 +8,18 @@
   color-scheme: light;
 
   /* environment / canvas (D0) */
-  --bio-canvas: var(--bio-color-cloud);
+  --bio-canvas: #f1f4ef;
   --bio-canvas-gradient:
-    radial-gradient(60vmax 50vmax at 8% -10%, rgb(167 207 186 / 0.34), transparent 70%),
-    radial-gradient(50vmax 45vmax at 105% 10%, rgb(169 188 226 / 0.26), transparent 70%),
-    radial-gradient(55vmax 50vmax at 60% 115%, rgb(165 199 203 / 0.24), transparent 70%);
-  --bio-ambient-opacity: 0.55;
+    radial-gradient(70vmax 55vmax at 0% -10%, rgb(167 207 186 / 0.75), transparent 62%),
+    radial-gradient(55vmax 50vmax at 100% 0%, rgb(169 188 226 / 0.6), transparent 60%),
+    radial-gradient(60vmax 55vmax at 70% 110%, rgb(165 199 203 / 0.6), transparent 62%),
+    radial-gradient(40vmax 40vmax at 20% 100%, rgb(217 201 156 / 0.38), transparent 60%);
+  --bio-ambient-opacity: 0.9;
+  --bio-grain-opacity: 0.05;
+  /* ambient forms take their hue from the environment's mood (§14.1) */
+  --bio-mood-a: rgb(143 208 173 / 0.85);
+  --bio-mood-b: rgb(142 169 223 / 0.7);
+  --bio-mood-c: rgb(199 182 223 / 0.65);
 
   /* text */
   --bio-text: var(--bio-color-carbon);
@@ -45,37 +51,55 @@
 
   --bio-focus: #4569a8;
 
-  /* material / porcelain — default, matte, stable */
-  --bio-porcelain-bg: #fdfdfb;
-  --bio-porcelain-border: rgb(37 45 43 / 0.07);
-  --bio-porcelain-highlight: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  /* material / porcelain — default, matte, stable. Lit from above. */
+  --bio-porcelain-bg: linear-gradient(180deg, #ffffff 0%, #fbfcfa 100%);
+  --bio-porcelain-solid: #fdfdfb;
+  --bio-porcelain-border: rgb(37 45 43 / 0.06);
+  --bio-porcelain-highlight: inset 0 1px 0 rgb(255 255 255 / 1);
+  --bio-light-color: rgb(255 255 255 / 0.9);
+  --bio-light-strength: 0.55;
 
-  /* material / membrane — translucent, diffused */
-  --bio-membrane-bg: rgb(247 248 245 / 0.66);
-  --bio-membrane-bg-opaque: #f3f5f2;
-  --bio-membrane-border: rgb(255 255 255 / 0.7);
-  --bio-membrane-blur: 20px;
-  --bio-membrane-highlight: inset 0 1px 0 rgb(255 255 255 / 0.75);
+  /* material / membrane — translucent, refractive, rimmed by light */
+  --bio-membrane-bg: linear-gradient(160deg, rgb(255 255 255 / 0.62), rgb(255 255 255 / 0.34));
+  --bio-membrane-bg-opaque: #f4f7f3;
+  --bio-membrane-border: rgb(255 255 255 / 0.55);
+  --bio-membrane-blur: 26px;
+  --bio-membrane-filter: blur(var(--bio-membrane-blur)) saturate(1.9) brightness(1.05);
+  --bio-membrane-highlight: inset 0 1px 0 rgb(255 255 255 / 0.95), inset 0 -1px 1px rgb(255 255 255 / 0.35);
+  --bio-rim: linear-gradient(150deg, rgb(255 255 255 / 1), rgb(255 255 255 / 0.25) 35%, rgb(255 255 255 / 0.08) 60%, rgb(255 255 255 / 0.7));
 
-  /* material / crystal — clear, reflective, elevated (accent only) */
-  --bio-crystal-bg: linear-gradient(155deg, rgb(255 255 255 / 0.98), rgb(244 248 246 / 0.9) 55%, rgb(232 240 238 / 0.94));
+  /* material / crystal — clear, precise, elevated (accent only) */
+  --bio-crystal-bg:
+    linear-gradient(115deg, transparent 38%, rgb(255 255 255 / 0.55) 46%, transparent 54%),
+    linear-gradient(160deg, rgb(255 255 255 / 0.92), rgb(236 246 241 / 0.72) 55%, rgb(225 236 246 / 0.82));
   --bio-crystal-border: rgb(255 255 255 / 1);
-  --bio-crystal-highlight: inset 0 1px 0 rgb(255 255 255 / 1), inset 0 -1px 0 rgb(37 45 43 / 0.04);
-  --bio-crystal-sheen: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.65) 46%, transparent 60%);
+  --bio-crystal-highlight: inset 0 1px 0 rgb(255 255 255 / 1), inset 0 0 0 1px rgb(255 255 255 / 0.4), inset 0 -10px 30px -12px rgb(143 208 173 / 0.35);
+  --bio-crystal-rim: linear-gradient(150deg, #ffffff, rgb(167 207 186 / 0.6) 40%, rgb(169 188 226 / 0.5) 70%, #ffffff);
 
-  /* material / carbon — deep, grounding */
-  --bio-carbon-bg: var(--bio-color-carbon);
+  /* material / carbon — deep, grounding, with a faint atmospheric glow */
+  --bio-carbon-bg: radial-gradient(120% 90% at 0% 0%, rgb(127 196 160 / 0.2), transparent 55%), linear-gradient(180deg, #27302e, #1f2725);
   --bio-carbon-text: var(--bio-color-cloud);
   --bio-carbon-muted: #b7c1bb;
-  --bio-carbon-border: rgb(255 255 255 / 0.06);
+  --bio-carbon-border: rgb(255 255 255 / 0.08);
+
+  /* "on" fills for tiles: white text stays ≥4.5:1 where it sits */
+  --bio-fill-growth: linear-gradient(150deg, #3a8a62 0%, #2f7351 45%, #1f5238 100%);
+  --bio-fill-water: linear-gradient(150deg, #3a8790 0%, #2c6f78 45%, #1e5259 100%);
+  --bio-fill-air: linear-gradient(150deg, #5a7cc0 0%, #4a6aae 45%, #334f8a 100%);
+  --bio-fill-earth: linear-gradient(150deg, #8f7230 0%, #7a5f22 45%, #5d4717 100%);
+
+  /* primary action: a lit, living fill */
+  --bio-primary-fill: linear-gradient(180deg, #3b8d65 0%, #2a6b4b 100%);
+  --bio-primary-glow: 0 10px 24px -10px rgb(47 115 81 / 0.7);
 
   /* depth (§8.1) — one light source, top-centre; shadows stay consistent */
-  --bio-shadow-color: 150 18% 16%;
+  /* shadows are tinted by the environment, never neutral grey */
+  --bio-shadow-color: 152 26% 22%;
   --bio-depth-0: 0 0 0 transparent;
-  --bio-depth-1: 0 1px 2px hsl(var(--bio-shadow-color) / 0.05);
-  --bio-depth-2: 0 1px 2px hsl(var(--bio-shadow-color) / 0.04), 0 6px 20px -4px hsl(var(--bio-shadow-color) / 0.08);
-  --bio-depth-3: 0 2px 6px hsl(var(--bio-shadow-color) / 0.06), 0 18px 44px -8px hsl(var(--bio-shadow-color) / 0.16);
-  --bio-depth-4: 0 4px 12px hsl(var(--bio-shadow-color) / 0.08), 0 34px 80px -12px hsl(var(--bio-shadow-color) / 0.26);
+  --bio-depth-1: 0 1px 2px hsl(var(--bio-shadow-color) / 0.06), 0 4px 14px -6px hsl(var(--bio-shadow-color) / 0.1);
+  --bio-depth-2: 0 1px 2px hsl(var(--bio-shadow-color) / 0.05), 0 12px 32px -12px hsl(var(--bio-shadow-color) / 0.2);
+  --bio-depth-3: 0 2px 6px hsl(var(--bio-shadow-color) / 0.07), 0 24px 56px -16px hsl(var(--bio-shadow-color) / 0.3);
+  --bio-depth-4: 0 4px 12px hsl(var(--bio-shadow-color) / 0.1), 0 40px 100px -20px hsl(var(--bio-shadow-color) / 0.42);
   --bio-scrim: rgb(37 45 43 / 0.24);
 }
 
@@ -83,12 +107,17 @@
   color-scheme: dark;
 
   /* never absolute black (§17.3) */
-  --bio-canvas: #1d2423;
+  --bio-canvas: #141b1a;
   --bio-canvas-gradient:
-    radial-gradient(60vmax 50vmax at 6% -12%, rgb(167 207 186 / 0.12), transparent 70%),
-    radial-gradient(50vmax 45vmax at 104% 8%, rgb(199 182 223 / 0.09), transparent 70%),
-    radial-gradient(55vmax 50vmax at 55% 118%, rgb(165 199 203 / 0.1), transparent 70%);
-  --bio-ambient-opacity: 0.4;
+    radial-gradient(70vmax 55vmax at 0% -10%, rgb(79 163 124 / 0.32), transparent 62%),
+    radial-gradient(55vmax 50vmax at 100% 0%, rgb(95 128 194 / 0.24), transparent 60%),
+    radial-gradient(60vmax 55vmax at 70% 110%, rgb(63 133 141 / 0.28), transparent 62%),
+    radial-gradient(40vmax 40vmax at 20% 100%, rgb(139 114 184 / 0.18), transparent 60%);
+  --bio-ambient-opacity: 0.55;
+  --bio-grain-opacity: 0.07;
+  --bio-mood-a: rgb(79 163 124 / 0.6);
+  --bio-mood-b: rgb(95 128 194 / 0.45);
+  --bio-mood-c: rgb(139 114 184 / 0.4);
 
   --bio-text: #f2f4f1;
   --bio-text-muted: #9ba8a1;
@@ -118,40 +147,70 @@
   --bio-focus: #9db8ea;
 
   /* restrained translucency, subdued highlights (§17.2) */
-  --bio-porcelain-bg: #262f2d;
-  --bio-porcelain-border: rgb(255 255 255 / 0.06);
-  --bio-porcelain-highlight: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  --bio-porcelain-bg: linear-gradient(180deg, #222b29 0%, #1d2524 100%);
+  --bio-porcelain-solid: #202927;
+  --bio-porcelain-border: rgb(255 255 255 / 0.07);
+  --bio-porcelain-highlight: inset 0 1px 0 rgb(255 255 255 / 0.06);
+  --bio-light-color: rgb(190 230 210 / 0.22);
+  --bio-light-strength: 0.7;
 
-  --bio-membrane-bg: rgb(40 49 47 / 0.7);
-  --bio-membrane-bg-opaque: #2a3331;
-  --bio-membrane-border: rgb(255 255 255 / 0.08);
-  --bio-membrane-blur: 24px;
-  --bio-membrane-highlight: inset 0 1px 0 rgb(255 255 255 / 0.06);
+  --bio-membrane-bg: linear-gradient(160deg, rgb(48 60 57 / 0.62), rgb(30 38 37 / 0.48));
+  --bio-membrane-bg-opaque: #232c2a;
+  --bio-membrane-border: rgb(255 255 255 / 0.1);
+  --bio-membrane-blur: 28px;
+  --bio-membrane-filter: blur(var(--bio-membrane-blur)) saturate(1.6) brightness(0.95);
+  --bio-membrane-highlight: inset 0 1px 0 rgb(255 255 255 / 0.12), inset 0 -1px 1px rgb(0 0 0 / 0.2);
+  --bio-rim: linear-gradient(150deg, rgb(255 255 255 / 0.32), rgb(255 255 255 / 0.06) 35%, rgb(255 255 255 / 0.02) 60%, rgb(255 255 255 / 0.16));
 
-  --bio-crystal-bg: linear-gradient(155deg, rgb(64 78 74 / 0.96), rgb(48 58 56 / 0.94) 55%, rgb(42 52 50 / 0.96));
-  --bio-crystal-border: rgb(255 255 255 / 0.14);
-  --bio-crystal-highlight: inset 0 1px 0 rgb(255 255 255 / 0.14), inset 0 -1px 0 rgb(0 0 0 / 0.2);
-  --bio-crystal-sheen: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.1) 46%, transparent 60%);
+  --bio-crystal-bg:
+    linear-gradient(115deg, transparent 38%, rgb(255 255 255 / 0.07) 46%, transparent 54%),
+    linear-gradient(160deg, rgb(62 80 75 / 0.9), rgb(40 52 50 / 0.86) 55%, rgb(38 46 58 / 0.9));
+  --bio-crystal-border: rgb(255 255 255 / 0.16);
+  --bio-crystal-highlight: inset 0 1px 0 rgb(255 255 255 / 0.16), inset 0 -12px 30px -14px rgb(127 196 160 / 0.3);
+  --bio-crystal-rim: linear-gradient(150deg, rgb(255 255 255 / 0.4), rgb(127 196 160 / 0.3) 40%, rgb(157 184 234 / 0.25) 70%, rgb(255 255 255 / 0.2));
 
-  --bio-carbon-bg: #161c1b;
+  --bio-carbon-bg: radial-gradient(120% 90% at 0% 0%, rgb(127 196 160 / 0.14), transparent 55%), linear-gradient(180deg, #111716, #0e1413);
   --bio-carbon-text: #f2f4f1;
   --bio-carbon-muted: #9ba8a1;
-  --bio-carbon-border: rgb(255 255 255 / 0.05);
+  --bio-carbon-border: rgb(255 255 255 / 0.07);
 
-  --bio-shadow-color: 160 20% 4%;
+  --bio-fill-growth: linear-gradient(150deg, #c4e4d2 0%, #8cc3a6 100%);
+  --bio-fill-water: linear-gradient(150deg, #c2e0e2 0%, #9cc8cc 100%);
+  --bio-fill-air: linear-gradient(150deg, #c9d6f0 0%, #a9bce2 100%);
+  --bio-fill-earth: linear-gradient(150deg, #ece2c2 0%, #d9c99c 100%);
+
+  --bio-primary-fill: linear-gradient(180deg, #bfe0cd 0%, #95c7ad 100%);
+  --bio-primary-glow: 0 10px 28px -10px rgb(127 196 160 / 0.55);
+
+  --bio-shadow-color: 165 30% 3%;
   --bio-depth-0: 0 0 0 transparent;
-  --bio-depth-1: 0 1px 2px hsl(var(--bio-shadow-color) / 0.3);
-  --bio-depth-2: 0 1px 2px hsl(var(--bio-shadow-color) / 0.3), 0 8px 24px -6px hsl(var(--bio-shadow-color) / 0.4);
-  --bio-depth-3: 0 2px 6px hsl(var(--bio-shadow-color) / 0.35), 0 20px 48px -10px hsl(var(--bio-shadow-color) / 0.55);
-  --bio-depth-4: 0 4px 12px hsl(var(--bio-shadow-color) / 0.4), 0 36px 90px -12px hsl(var(--bio-shadow-color) / 0.7);
+  --bio-depth-1: 0 1px 2px hsl(var(--bio-shadow-color) / 0.35), 0 6px 18px -8px hsl(var(--bio-shadow-color) / 0.45);
+  --bio-depth-2: 0 1px 2px hsl(var(--bio-shadow-color) / 0.35), 0 14px 36px -12px hsl(var(--bio-shadow-color) / 0.6);
+  --bio-depth-3: 0 2px 6px hsl(var(--bio-shadow-color) / 0.4), 0 26px 60px -16px hsl(var(--bio-shadow-color) / 0.7);
+  --bio-depth-4: 0 4px 12px hsl(var(--bio-shadow-color) / 0.45), 0 40px 100px -20px hsl(var(--bio-shadow-color) / 0.8);
   --bio-scrim: rgb(10 14 13 / 0.5);
+}
+
+/* Mood: the environment's light follows system state (§14.1 contextual
+   awareness). Attention warms the light; alert adds a restrained red. */
+[data-bio-environment="day"][data-bio-mood="attention"],
+[data-bio-environment="day"] [data-bio-mood="attention"] {
+  --bio-mood-a: rgb(232 196 118 / 0.85);
+  --bio-mood-b: rgb(143 208 173 / 0.75);
+  --bio-mood-c: rgb(240 160 140 / 0.6);
+}
+[data-bio-environment="night"][data-bio-mood="attention"],
+[data-bio-environment="night"] [data-bio-mood="attention"] {
+  --bio-mood-a: rgb(201 154 76 / 0.45);
+  --bio-mood-b: rgb(79 163 124 / 0.45);
+  --bio-mood-c: rgb(216 111 107 / 0.3);
 }
 
 /* Users who ask for less transparency get opaque membranes (§5.5 rule 6). */
 @media (prefers-reduced-transparency: reduce) {
   [data-bio-environment] {
     --bio-membrane-bg: var(--bio-membrane-bg-opaque);
-    --bio-membrane-blur: 0px;
+    --bio-membrane-filter: none;
   }
 }
 

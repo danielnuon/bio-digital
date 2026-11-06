@@ -1,7 +1,8 @@
-import { useId, type ReactNode } from "react";
+import { useId, useRef, type ReactNode } from "react";
 import { LayoutGroup, motion } from "motion/react";
 import { useBioMotion } from "../physics/useBioMotion";
 import { cx } from "../utils/cx";
+import { readRadius, useContinuousCorners } from "../utils/hooks";
 import styles from "./Navigation.module.css";
 
 export interface NavItem<T extends string> {
@@ -19,6 +20,8 @@ export interface NavRailProps<T extends string> {
   items: NavItem<T>[];
   /** Become a bottom bar on narrow viewports. */
   responsive?: boolean;
+  /** "dock" is a floating glass capsule with icon-over-label items. */
+  variant?: "rail" | "dock";
   className?: string;
 }
 
@@ -26,19 +29,24 @@ export interface NavRailProps<T extends string> {
  * Persistent navigation. Its position never changes between destinations;
  * only the active surface glides to the new location (§12.3).
  */
-export function NavRail<T extends string>({ label, value, onChange, items, responsive = true, className }: NavRailProps<T>) {
+export function NavRail<T extends string>({ label, value, onChange, items, responsive = true, variant = "rail", className }: NavRailProps<T>) {
   const group = useId();
-  const m = useBioMotion("porcelain");
+  const m = useBioMotion(variant === "dock" ? "membrane" : "porcelain");
+  const navRef = useRef<HTMLElement>(null);
+  // The dock's corners sit against the device's; draw them continuous.
+  useContinuousCorners(navRef, readRadius, variant === "dock");
   return (
-    <nav aria-label={label} className={cx(styles.rail, className)} data-responsive={responsive}>
+    <nav ref={navRef} aria-label={label} className={cx(styles.rail, variant === "dock" && styles.dock, className)} data-responsive={responsive}>
       <LayoutGroup id={group}>
         <ul className={styles.railList}>
           {items.map((it) => {
             const active = it.value === value;
             return (
               <li key={it.value}>
-                <button
+                <motion.button
                   type="button"
+                  whileTap={m.reduced ? undefined : { scale: 0.92 }}
+                  transition={m.transition}
                   className={styles.railItem}
                   aria-current={active ? "page" : undefined}
                   onClick={() => onChange(it.value)}
@@ -52,7 +60,7 @@ export function NavRail<T extends string>({ label, value, onChange, items, respo
                       <span className="bio-visually-hidden"> new</span>
                     </span>
                   ) : null}
-                </button>
+                </motion.button>
               </li>
             );
           })}

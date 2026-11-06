@@ -1,124 +1,192 @@
-import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useMemo, useState } from "react";
+import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import {
+  AnimatedNumber,
   BioProvider,
-  Breadcrumbs,
   Button,
   Canvas,
   Drawer,
+  IslandProvider,
   Menu,
   NavRail,
   Recede,
+  SegmentedControl,
   StatusIndicator,
-  Surface,
   ToastProvider,
+  useBio,
   useBioMotion,
-  useToast,
+  useIsland,
+  type Density,
+  type EnvironmentPreference,
 } from "../bio";
-import { DensitySwitch, EnvironmentSwitch, MotionSwitch, PreferencesPanel } from "./Preferences";
+import { PreferencesPanel } from "./Preferences";
 import { Overview } from "./views/Overview";
 import { Zones } from "./views/Zones";
 import { PhysicsLab } from "./views/PhysicsLab";
 import { Library } from "./views/Library";
-import { IconDownload, IconLibrary, IconMore, IconOverview, IconPhysics, IconRefresh, IconSliders, IconZones } from "./icons";
+import { initialAlerts, useLiveReadings, type Alert, type LiveReadings } from "./data";
+import { IconAuto, IconDownload, IconLibrary, IconMoon, IconMore, IconOverview, IconPhysics, IconRefresh, IconSliders, IconSun, IconZones } from "./icons";
 import s from "./demo.module.css";
 
 export type View = "overview" | "zones" | "physics" | "library";
 
 const titles: Record<View, { title: string; lede: string }> = {
-  overview: { title: "Overview", lede: "The habitat at a glance." },
-  zones: { title: "Living zones", lede: "Expand a zone. Its neighbours make room." },
-  physics: { title: "Physics lab", lede: "Mass, damping and momentum, made visible." },
-  library: { title: "Design library", lede: "Tokens, materials and the five component families." },
+  overview: { title: "Habitat", lede: "Everything alive in the building, at a glance." },
+  zones: { title: "Zones", lede: "Expand a zone. Its neighbours make room." },
+  physics: { title: "Physics", lede: "Mass, damping and momentum, made visible." },
+  library: { title: "Library", lede: "Tokens, materials and the five component families." },
 };
 
 export function App() {
   return (
     <BioProvider storageKey="bio-digital-demo">
-      <ToastProvider>
-        <Shell />
-      </ToastProvider>
+      <Root />
     </BioProvider>
   );
 }
 
-function Shell() {
+/** Live data and alerts live at the top so the island, canvas mood and views agree. */
+function Root() {
+  const live = useLiveReadings();
+  const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
+  return (
+    <IslandProvider idle={<IslandIdle live={live} attention={alerts.filter((a) => a.status !== "success").length} />}>
+      <ToastProvider>
+        <Shell live={live} alerts={alerts} setAlerts={setAlerts} />
+      </ToastProvider>
+    </IslandProvider>
+  );
+}
+
+function IslandIdle({ live, attention }: { live: LiveReadings; attention: number }) {
+  return (
+    <span className={s.islandIdle}>
+      <StatusIndicator status={attention ? "warning" : "active"} label={<span className="bio-visually-hidden">{attention ? "Needs attention" : "Calm"}</span>} />
+      <span className={s.islandText}>{attention ? `${attention} signal${attention > 1 ? "s" : ""}` : "Habitat calm"}</span>
+      <span className={s.islandSep} aria-hidden="true" />
+      <span className={s.islandFigure}>
+        <AnimatedNumber value={live.power} format={(v) => v.toFixed(1)} /> kW
+      </span>
+    </span>
+  );
+}
+
+function Shell({ live, alerts, setAlerts }: { live: LiveReadings; alerts: Alert[]; setAlerts: (a: Alert[] | ((p: Alert[]) => Alert[])) => void }) {
   const [view, setView] = useState<View>("overview");
   const [prefsOpen, setPrefsOpen] = useState(false);
-  const notify = useToast();
+  const { environmentPreference, setEnvironment, density, setDensity } = useBio();
+  const island = useIsland();
   const m = useBioMotion("ambient");
+  const mood = alerts.some((a) => a.status === "critical" || a.status === "warning") ? "attention" : "calm";
+
+  // Large title collapses into a compact glass bar as the page scrolls (§12.3: context stays recognisable).
+  const { scrollY } = useScroll();
+  const titleScale = useTransform(scrollY, [0, 90], [1, 0.58]);
+  const ledeOpacity = useTransform(scrollY, [0, 50], [1, 0]);
+  const barOpacity = useTransform(scrollY, [30, 90], [0, 1]);
+
+  const today = useMemo(
+    () => new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }),
+    [],
+  );
 
   return (
-    <Canvas>
+    <Canvas mood={mood}>
       <a href="#main" className={s.skip}>
         Skip to content
       </a>
       <div className={s.shell}>
-        <aside className={s.sidebar}>
-          <div className={s.brand}>
-            <span className={s.brandMark} aria-hidden="true" />
-            <span>
-              <span className={s.brandName}>BIO DIGITAL</span>
-              <span className={s.brandSub}>Habitat console</span>
-            </span>
-          </div>
+        <div className={s.dockWrap}>
           <NavRail<View>
+            variant="dock"
             label="Primary"
             value={view}
-            onChange={setView}
-            className={s.nav}
+            onChange={(v) => {
+              setView(v);
+              window.scrollTo({ top: 0, behavior: m.reduced ? "auto" : "smooth" });
+            }}
             items={[
-              { value: "overview", label: "Overview", icon: <IconOverview /> },
-              { value: "zones", label: "Zones", icon: <IconZones />, badge: 2 },
+              { value: "overview", label: "Habitat", icon: <IconOverview /> },
+              { value: "zones", label: "Zones", icon: <IconZones />, badge: alerts.filter((a) => a.status !== "success").length || undefined },
               { value: "physics", label: "Physics", icon: <IconPhysics /> },
               { value: "library", label: "Library", icon: <IconLibrary /> },
             ]}
           />
-          <Surface material="carbon" depth={2} radius="r4" padding="md" className={s.sideCard}>
-            <StatusIndicator status="active" label="Habitat alive" />
-            <p className={s.sideCardText}>Readings drift every few seconds and pause when this tab is hidden.</p>
-          </Surface>
-        </aside>
+        </div>
 
         <Recede className={s.main}>
-          <header className={s.topbar}>
-            <div className={s.heading}>
-              <Breadcrumbs items={[{ label: "Habitat", onClick: () => setView("overview") }, { label: titles[view].title }]} />
-              <h1 className={s.h1}>{titles[view].title}</h1>
-              <p className={s.lede}>{titles[view].lede}</p>
-            </div>
-            <div className={s.controls}>
-              <div className={s.inlinePrefs}>
-                <EnvironmentSwitch compact />
-                <DensitySwitch compact />
-                <MotionSwitch compact />
+          <header className={s.header}>
+            <motion.div className={s.headerBar} style={{ opacity: barOpacity }} aria-hidden="true" />
+            <div className={s.headerInner}>
+              <div className={s.heading}>
+                <motion.p className={s.date} style={{ opacity: ledeOpacity }}>
+                  {today}
+                </motion.p>
+                <motion.h1 className={s.h1} style={{ scale: titleScale, transformOrigin: "0% 100%" }}>
+                  {titles[view].title}
+                </motion.h1>
               </div>
-              <Button variant="secondary" size="compact" icon={<IconSliders />} onClick={() => setPrefsOpen(true)} className={s.prefsButton}>
-                Preferences
-              </Button>
-              <Menu
-                label="More actions"
-                trigger={(p) => <Button {...p} variant="secondary" size="compact" iconOnly icon={<IconMore />} aria-label="More actions" />}
-                items={[
-                  { label: "Export report", icon: <IconDownload />, shortcut: "⌘E", onSelect: () => notify({ title: "Report exported", description: "habitat-2026-11-06.csv is ready.", status: "success" }) },
-                  { label: "Recalibrate sensors", icon: <IconRefresh />, onSelect: () => notify({ title: "Recalibration started", description: "Sensors settle in about two minutes.", status: "information" }) },
-                  { type: "separator" },
-                  { label: "All preferences", icon: <IconSliders />, onSelect: () => setPrefsOpen(true) },
-                ]}
-              />
+              <div className={s.controls}>
+                <SegmentedControl<EnvironmentPreference>
+                  label="Environment"
+                  size="compact"
+                  value={environmentPreference}
+                  onChange={setEnvironment}
+                  className={s.envSwitch}
+                  options={[
+                    { value: "day", label: <span className="bio-visually-hidden">Day</span>, icon: <IconSun /> },
+                    { value: "night", label: <span className="bio-visually-hidden">Night</span>, icon: <IconMoon /> },
+                    { value: "system", label: <span className="bio-visually-hidden">Automatic</span>, icon: <IconAuto /> },
+                  ]}
+                />
+                <SegmentedControl<Density>
+                  label="Information density"
+                  size="compact"
+                  value={density}
+                  onChange={(d) => {
+                    setDensity(d);
+                    island({
+                      title: `${d[0].toUpperCase()}${d.slice(1)} density`,
+                      description: d === "ambient" ? "Essentials only." : d === "engaged" ? "Supporting detail revealed." : "Analysis and advanced controls revealed.",
+                      status: "information",
+                      duration: 2200,
+                    });
+                  }}
+                  className={s.densitySwitch}
+                  options={[
+                    { value: "ambient", label: "Ambient" },
+                    { value: "engaged", label: "Engaged" },
+                    { value: "immersed", label: "Immersed" },
+                  ]}
+                />
+                <Button variant="secondary" size="compact" iconOnly icon={<IconSliders />} aria-label="Preferences" onClick={() => setPrefsOpen(true)} />
+                <Menu
+                  label="More actions"
+                  trigger={(p) => <Button {...p} variant="secondary" size="compact" iconOnly icon={<IconMore />} aria-label="More actions" />}
+                  items={[
+                    { label: "Export report", icon: <IconDownload />, shortcut: "⌘E", onSelect: () => island({ title: "Report exported", description: "habitat-2026-11-06.csv is ready.", status: "success" }) },
+                    { label: "Recalibrate sensors", icon: <IconRefresh />, onSelect: () => island({ title: "Recalibrating sensors", description: "They settle in about two minutes.", status: "information" }) },
+                    { type: "separator" },
+                    { label: "All preferences", icon: <IconSliders />, onSelect: () => setPrefsOpen(true) },
+                  ]}
+                />
+              </div>
             </div>
+            <motion.p className={s.lede} style={{ opacity: ledeOpacity }}>
+              {titles[view].lede}
+            </motion.p>
           </header>
 
           <main id="main" tabIndex={-1} className={s.content}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={view}
-                initial={{ opacity: 0, y: m.reduced ? 0 : 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: m.reduced ? 0 : -6 }}
-                transition={m.reduced ? { duration: 0.12 } : { type: "spring", stiffness: 260, damping: 30 }}
+                initial={{ opacity: 0, y: m.reduced ? 0 : 16, scale: m.reduced ? 1 : 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: m.reduced ? 0 : -8, scale: m.reduced ? 1 : 0.99 }}
+                transition={m.reduced ? { duration: 0.12 } : { type: "spring", stiffness: 240, damping: 28 }}
               >
-                {view === "overview" && <Overview onNavigate={setView} />}
+                {view === "overview" && <Overview onNavigate={setView} live={live} alerts={alerts} setAlerts={setAlerts} />}
                 {view === "zones" && <Zones />}
                 {view === "physics" && <PhysicsLab />}
                 {view === "library" && <Library />}

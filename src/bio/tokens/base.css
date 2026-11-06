@@ -49,3 +49,18 @@
   animation-iteration-count: 1 !important;
   scroll-behavior: auto !important;
 }
+
+/* Concentric nesting helper: a parent declares its radius and padding,
+   children with .bio-concentric derive theirs (min R2). */
+.bio-concentric {
+  border-radius: max(var(--bio-radius-r2), calc(var(--bio-outer-radius, var(--bio-radius-r4)) - var(--bio-outer-pad, 16px)));
+}
+
+/* Continuous corners where the platform draws them natively (§7.1). */
+@supports (corner-shape: superellipse(2)) {
+  [data-bio-root] [data-bio-material],
+  [data-bio-root] button,
+  [data-bio-root] .bio-continuous {
+    corner-shape: superellipse(1.6);
+  }
+}

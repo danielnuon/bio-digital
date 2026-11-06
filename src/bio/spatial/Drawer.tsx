@@ -5,7 +5,7 @@ import { useBio } from "../context/BioProvider";
 import { surfaceClass } from "../foundation/Surface";
 import { shouldDismiss } from "../physics/physics";
 import { useBioMotion } from "../physics/useBioMotion";
-import { useFocusTrap } from "../utils/hooks";
+import { readRadius, useContinuousCorners, useFocusTrap } from "../utils/hooks";
 import { cx } from "../utils/cx";
 import { CloseGlyph, useSpatialLayer } from "./Modal";
 import styles from "./Spatial.module.css";
@@ -30,6 +30,7 @@ export function Drawer({ open, onClose, title, side = "end", children, closeLabe
   const panel = useRef<HTMLDivElement>(null);
   const controls = useDragControls();
   useSpatialLayer(open);
+  useContinuousCorners(panel, readRadius, open && side === "bottom");
   useFocusTrap(open, panel);
 
   useEffect(() => {
