@@ -72,7 +72,7 @@ function Island({ idle, message, onDismiss }: { idle: ReactNode; message?: Islan
     <div className={styles.dock}>
       <motion.div
         layout
-        className={cx(styles.island, message ? styles.expanded : styles.compact)}
+        className={cx(styles.island, message ? cx(styles.expanded, "bio-lumen") : styles.compact)}
         style={{ borderRadius: message ? 28 : 999 }}
         transition={{ layout: layoutT }}
         drag={message && !m.reduced ? "y" : false}

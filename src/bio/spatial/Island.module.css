@@ -27,7 +27,7 @@
   touch-action: pan-x;
 }
 [data-bio-environment="day"] .island {
-  background: radial-gradient(120% 120% at 0% 0%, rgb(127 196 160 / 0.22), transparent 55%), #1b2321;
+  background: radial-gradient(120% 120% at 0% 0%, rgb(155 151 255 / 0.2), transparent 55%), #1b2321;
 }
 .compact {
   padding: 8px 16px 8px 10px;

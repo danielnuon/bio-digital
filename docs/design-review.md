@@ -51,6 +51,18 @@ Known limits of the corner work. These are facts about the platform, not fixable
 
 Sources: [squircle.js.org: squircles in CSS](https://squircle.js.org/blog/squircles-in-css), [web-features: corner-shape](https://web-platform-dx.github.io/web-features-explorer/features/corner-shape), [kylebshr/ScreenCorners](https://github.com/kylebshr/ScreenCorners), [continuous corner path constants](https://gist.github.com/ruvasik/18e511724ebf592e417c5bcae2486cc9).
 
+## Pass 6: Colour identity
+
+Feedback on v2: the palette felt "too basic and not unique."
+
+| Spec intent | Observed in v2 | Pain point | v3 change | Status |
+|---|---|---|---|---|
+| §6: neutrals form the foundation, accents carry meaning, and saturation rises only for emphasis. | A deep forest green (`#2F7351`, not a spec colour) was used for the primary action, the nav, tiles, icons and accent text. The five accents were darkened into separate saturated fills. | It read as a generic wellness or finance green, and the spec's own pastel family was mostly lost. Nothing about it was ownable. | The spec accents are restored as they are written, with Carbon text on top (7.3–8.6:1). The primary action becomes Carbon by day and Cloud by night, so the one thing to press is the one solid, grounded object. Accent text uses per-hue ink tokens (`--bio-ink-*`, 5.2:1 or better). | Done |
+| §4.3 the living gradient, and §3.7 material life. | Gradients were decorative mesh blobs. | No signature that belonged to BIO DIGITAL. | **Lumen**, a new signature layer: structural colour taken from nacre, beetle shell and bioluminescence (mint, cyan, violet, orchid, gold). It appears only where something is alive or active: a slowly turning rim on the primary action and the current dock item, the Island while it speaks, live data (rings and the energy flow line), the hero's voice line, and the orb. It covers well under 5% of a screen and stops turning under reduced motion. | Done |
+| §17: night keeps the same identity. | Night swapped to different pale greens. | The two environments felt like two products. | The same accent fills and the same Lumen hues carry across both. Night uses Lumen at full brightness (5.5:1 or better on Carbon), and day uses a deep cut for strokes and text. | Done |
+
+**Note on the spec.** Lumen is an addition to §6, not a replacement. The §6.1–6.3 tokens are unchanged. If you adopt it, the spec should gain a §6.5 "Signature light" section with the five Lumen hues and the under-5% usage rule.
+
 ## Spec compliance, re-checked after v2
 
 - **Accessibility (§18):** axe runs on every view in tests with no violations. Rings use `role="meter"` with value text. The Island is a polite live region. Gestures keep their button alternatives.

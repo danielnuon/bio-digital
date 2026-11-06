@@ -51,7 +51,7 @@ export function NavRail<T extends string>({ label, value, onChange, items, respo
                   aria-current={active ? "page" : undefined}
                   onClick={() => onChange(it.value)}
                 >
-                  {active && <motion.span layoutId="rail-active" className={styles.railActive} transition={m.transition} />}
+                  {active && <motion.span layoutId="rail-active" className={cx(styles.railActive, variant === "dock" && "bio-lumen")} transition={m.transition} />}
                   {it.icon && <span className={styles.railIcon} aria-hidden="true">{it.icon}</span>}
                   <span className={styles.railLabel}>{it.label}</span>
                   {it.badge ? (

@@ -48,10 +48,7 @@
   background: var(--_fill, var(--bio-fill-growth));
 }
 .tile[aria-pressed="true"] {
-  color: #fff;
-}
-[data-bio-environment="night"] .tile[aria-pressed="true"] {
-  color: var(--bio-color-carbon);
+  color: var(--bio-on-fill, var(--bio-color-carbon));
 }
 
 .icon {
@@ -67,9 +64,9 @@
     color var(--bio-duration-state) var(--bio-ease-settle);
 }
 .tile[aria-pressed="true"] .icon {
-  background: rgb(255 255 255 / 0.95);
-  color: var(--_ink, #2f7351);
-  box-shadow: 0 4px 12px -4px rgb(0 0 0 / 0.25);
+  background: var(--bio-color-carbon);
+  color: var(--bio-color-cloud);
+  box-shadow: 0 6px 14px -6px rgb(37 45 43 / 0.5);
 }
 .icon svg {
   width: 20px;

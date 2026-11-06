@@ -12,32 +12,34 @@
   mix-blend-mode: normal;
 }
 .b1 {
-  background: radial-gradient(circle at 30% 30%, var(--bio-mood-a), transparent 72%);
+  background: radial-gradient(circle at 30% 30%, rgb(110 240 194 / 0.55), transparent 72%);
   animation: wobble1 11s var(--bio-ease-ambient) infinite alternate;
 }
 .b2 {
   inset: 10%;
-  background: radial-gradient(circle at 70% 40%, var(--bio-mood-b), transparent 70%);
+  background: radial-gradient(circle at 70% 40%, rgb(155 151 255 / 0.5), transparent 70%);
   animation: wobble2 13s var(--bio-ease-ambient) infinite alternate;
 }
 .b3 {
   inset: 14%;
-  background: radial-gradient(circle at 45% 75%, var(--bio-mood-c), transparent 70%);
+  background: radial-gradient(circle at 45% 75%, rgb(240 166 255 / 0.45), transparent 70%);
   animation: wobble3 17s var(--bio-ease-ambient) infinite alternate;
 }
 .core {
   position: absolute;
   inset: 24%;
   border-radius: 50%;
+  /* nacre: structural colour that turns as the light moves */
   background:
-    radial-gradient(circle at 34% 28%, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.2) 30%, transparent 52%),
-    radial-gradient(circle at 70% 75%, var(--bio-mood-c), transparent 60%),
-    radial-gradient(circle at 40% 60%, var(--bio-mood-b), transparent 70%),
-    var(--bio-mood-a);
+    radial-gradient(circle at 34% 28%, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.25) 28%, transparent 50%),
+    radial-gradient(circle at 50% 50%, transparent 40%, rgb(255 255 255 / 0.35) 72%),
+    conic-gradient(from var(--bio-lumen-angle), #6ef0c2, #5ccfff, #9b97ff, #f0a6ff, #ffd27a, #6ef0c2);
+  animation:
+    breathe 6s var(--bio-ease-ambient) infinite alternate,
+    bio-lumen-turn 18s linear infinite;
   box-shadow:
     inset 0 -14px 30px -10px rgb(0 0 0 / 0.12),
-    0 20px 50px -18px var(--bio-mood-a);
-  animation: breathe 6s var(--bio-ease-ambient) infinite alternate;
+    0 20px 50px -18px rgb(155 151 255 / 0.7);
 }
 .gloss {
   position: absolute;
@@ -48,8 +50,10 @@
 }
 [data-bio-environment="night"] .core {
   background:
-    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0.08) 35%, transparent 60%),
-    radial-gradient(circle at 50% 55%, var(--bio-mood-a), transparent 75%);
+    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.08) 30%, transparent 55%),
+    radial-gradient(circle at 50% 50%, transparent 35%, rgb(24 30 29 / 0.45) 80%),
+    conic-gradient(from var(--bio-lumen-angle), #6ef0c2, #5ccfff, #9b97ff, #f0a6ff, #ffd27a, #6ef0c2);
+  box-shadow: 0 0 60px -10px rgb(155 151 255 / 0.55), 0 0 30px -12px rgb(110 240 194 / 0.6);
 }
 @keyframes wobble1 {
   to {

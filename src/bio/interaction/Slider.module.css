@@ -117,10 +117,10 @@
   inset: 0;
   border-radius: inherit;
   background: linear-gradient(90deg, color-mix(in srgb, var(--bio-color-growth) 70%, transparent), var(--bio-color-growth));
-  box-shadow: inset -1px 0 0 rgb(255 255 255 / 0.6), 4px 0 16px -4px rgb(47 115 81 / 0.35);
+  box-shadow: inset -1px 0 0 rgb(255 255 255 / 0.6), 4px 0 16px -4px rgb(105 83 154 / 0.3);
 }
 [data-bio-environment="night"] .capsuleFill {
-  background: linear-gradient(90deg, rgb(127 196 160 / 0.55), rgb(167 207 186 / 0.95));
+  background: var(--bio-gradient-spectrum);
 }
 .capsuleIcon {
   position: absolute;

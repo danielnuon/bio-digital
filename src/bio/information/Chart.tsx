@@ -121,13 +121,13 @@ export function Chart({ title, summary, labels, series, height = 220, format = (
               {series.map((s) => (
                 <g key={s.id}>
                   <linearGradient id={`${id}-${s.id}`} x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0" stopColor={s.color} stopOpacity="0.34" />
-                    <stop offset="0.7" stopColor={s.color} stopOpacity="0.06" />
-                    <stop offset="1" stopColor={s.color} stopOpacity="0" />
+                    <stop offset="0" style={{ stopColor: s.color }} stopOpacity="0.34" />
+                    <stop offset="0.7" style={{ stopColor: s.color }} stopOpacity="0.06" />
+                    <stop offset="1" style={{ stopColor: s.color }} stopOpacity="0" />
                   </linearGradient>
                   <linearGradient id={`${id}-${s.id}-stroke`} x1="0" x2="1" y1="0" y2="0">
-                    <stop offset="0" stopColor={(s.gradient ?? [s.color, s.color])[0]} />
-                    <stop offset="1" stopColor={(s.gradient ?? [s.color, s.color])[1]} />
+                    <stop offset="0" style={{ stopColor: (s.gradient ?? [s.color, s.color])[0] }} />
+                    <stop offset="1" style={{ stopColor: (s.gradient ?? [s.color, s.color])[1] }} />
                   </linearGradient>
                 </g>
               ))}

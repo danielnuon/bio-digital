@@ -57,6 +57,7 @@
 /* ── variants ───────────────────────────────────────────────── */
 /* Primary: a lit fill with a soft glow cast in its own colour. */
 .primary {
+  --bio-lumen-width: 1.5px;
   background: var(--bio-primary-fill);
   color: var(--bio-on-primary);
   box-shadow:
@@ -66,7 +67,8 @@
 }
 .primary:hover:not([aria-disabled="true"]) {
   box-shadow:
-    0 14px 30px -10px color-mix(in srgb, var(--bio-primary) 75%, transparent),
+    0 14px 30px -12px color-mix(in srgb, var(--bio-primary) 60%, transparent),
+    0 10px 34px -8px rgb(155 151 255 / 0.45),
     inset 0 1px 0 rgb(255 255 255 / 0.32),
     inset 0 -1px 0 rgb(0 0 0 / 0.12);
 }

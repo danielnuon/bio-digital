@@ -41,8 +41,8 @@ export function Rings({ rings, label, size = 168, centerValue, centerLabel, show
           <defs>
             {rings.map((r) => (
               <linearGradient key={r.id} id={`${id}-${r.id}`} x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor={r.colors[0]} />
-                <stop offset="1" stopColor={r.colors[1]} />
+                <stop offset="0" style={{ stopColor: r.colors[0] }} />
+                <stop offset="1" style={{ stopColor: r.colors[1] }} />
               </linearGradient>
             ))}
             <filter id={`${id}-glow`} x="-30%" y="-30%" width="160%" height="160%">
@@ -57,7 +57,7 @@ export function Rings({ rings, label, size = 168, centerValue, centerLabel, show
             const radius = size / 2 - stroke / 2 - i * (stroke + gap);
             return (
               <g key={r.id}>
-                <circle className={styles.track} cx={size / 2} cy={size / 2} r={radius} stroke={r.colors[1]} strokeWidth={stroke} />
+                <circle className={styles.track} cx={size / 2} cy={size / 2} r={radius} style={{ stroke: r.colors[1] }} strokeWidth={stroke} />
                 <motion.circle
                   className={styles.arc}
                   cx={size / 2}

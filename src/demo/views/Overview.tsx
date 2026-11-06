@@ -95,9 +95,9 @@ export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
           centerLabel="solar"
           size={184}
           rings={[
-            { id: "solar", label: "Solar coverage", value: selfSupplied / 100, valueText: `${selfSupplied}%`, colors: ["#9fdcbc", "#2f7351"] },
-            { id: "air", label: "Air quality", value: live.air / 100, valueText: `${Math.round(live.air)} / 100`, colors: ["#c5d3f0", "#4a6aae"] },
-            { id: "water", label: "Cistern", value: live.water / 2900, valueText: `${Math.round((live.water / 2900) * 100)}%`, colors: ["#b6dde0", "#2c6f78"] },
+            { id: "solar", label: "Solar coverage", value: selfSupplied / 100, valueText: `${selfSupplied}%`, colors: ["var(--bio-lumen-5)", "var(--bio-lumen-ink-4)"] },
+            { id: "air", label: "Air quality", value: live.air / 100, valueText: `${Math.round(live.air)} / 100`, colors: ["var(--bio-lumen-2)", "var(--bio-lumen-ink-3)"] },
+            { id: "water", label: "Cistern", value: live.water / 2900, valueText: `${Math.round((live.water / 2900) * 100)}%`, colors: ["var(--bio-lumen-1)", "var(--bio-lumen-ink-2)"] },
           ]}
         />
       </Card>
@@ -125,7 +125,7 @@ export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
           unit="kW"
           delta={{ value: "11%", direction: "up", positive: true, label: "versus yesterday" }}
           trend={live.trendSolar}
-          trendColor="var(--bio-warning-ink)"
+          trendColor="var(--bio-ink-earth)"
           detail="Clear sky. Panels at 94% efficiency."
           analysis="Battery wall 78% charged; 12.4 kWh stored since noon."
         />
@@ -138,7 +138,7 @@ export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
           unit="/ 100"
           delta={{ value: "1 pt", direction: "flat", label: "versus last hour" }}
           trend={live.trendAir}
-          trendColor="var(--bio-information-ink)"
+          trendColor="var(--bio-ink-air)"
           detail="PM2.5 at 4 µg/m³. CO₂ averages 560 ppm."
           analysis="North studio CO₂ peaked at 790 ppm at 11:45; ventilation responded within 40 s."
         />
@@ -152,7 +152,7 @@ export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
           unit="L"
           delta={{ value: "1,840 L", direction: "up", positive: true, label: "since last night" }}
           trend={live.trendWater}
-          trendColor="#2c6f78"
+          trendColor="var(--bio-ink-water)"
           detail="Cistern 64% full."
           analysis="Inflow 6.2 L/min. Overflow diverter engages at 92%."
         />
@@ -194,8 +194,8 @@ export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
             min={0}
             height={density === "immersed" ? 280 : 240}
             series={[
-              { id: "use", label: "Demand", data: use, color: "var(--bio-accent-ink)", gradient: ["#6fb1b8", "#2f7351"], glow: true },
-              { id: "solar", label: "Solar", data: solar, color: "var(--bio-warning-ink)", dashed: true, area: false },
+              { id: "use", label: "Demand", data: use, color: "var(--bio-lumen-ink-2)", gradient: ["var(--bio-lumen-ink-1)", "var(--bio-lumen-ink-3)"], glow: true },
+              { id: "solar", label: "Solar", data: solar, color: "var(--bio-lumen-ink-5)", dashed: true, area: false },
             ]}
           />
         </TabPanel>
@@ -208,9 +208,9 @@ export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
         </h2>
         <div className={s.tileGrid}>
           <ControlTile label="Circadian light" icon={<IconSun />} on={tiles.circadian} onChange={toggle("circadian", "Circadian light")} status={tiles.circadian ? "Following the sun" : "Off"} />
-          <ControlTile label="Irrigation" icon={<IconDrop />} on={tiles.irrigation} onChange={toggle("irrigation", "Irrigation")} fill="var(--bio-fill-water)" ink="#2c6f78" status={tiles.irrigation ? "On demand" : "Paused"} />
-          <ControlTile label="Fresh air" icon={<IconWind />} on={tiles.boost} onChange={toggle("boost", "Fresh air boost")} fill="var(--bio-fill-air)" ink="#4a6aae" status={tiles.boost ? "Boosting" : "Balanced"} />
-          <ControlTile label="Night purge" icon={<IconMoon />} on={tiles.purge} onChange={toggle("purge", "Night purge")} fill="var(--bio-fill-earth)" ink="#7a5f22" status={tiles.purge ? "Tonight" : "Off"} />
+          <ControlTile label="Irrigation" icon={<IconDrop />} on={tiles.irrigation} onChange={toggle("irrigation", "Irrigation")} fill="var(--bio-fill-water)" status={tiles.irrigation ? "On demand" : "Paused"} />
+          <ControlTile label="Fresh air" icon={<IconWind />} on={tiles.boost} onChange={toggle("boost", "Fresh air boost")} fill="var(--bio-fill-air)" status={tiles.boost ? "Boosting" : "Balanced"} />
+          <ControlTile label="Night purge" icon={<IconMoon />} on={tiles.purge} onChange={toggle("purge", "Night purge")} fill="var(--bio-fill-earth)" status={tiles.purge ? "Tonight" : "Off"} />
         </div>
         <Surface material="membrane" depth={1} radius="r5" padding="md">
           <Slider variant="capsule" icon={<IconThermo />} label="Comfort target" min={18} max={26} step={0.5} value={target} onChange={setTarget} format={(v) => `${v.toFixed(1)} °C`} />

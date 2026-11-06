@@ -326,17 +326,15 @@
   height: 24px;
 }
 .dock .railActive {
-  background: var(--bio-fill-growth);
-  box-shadow: 0 8px 20px -8px rgb(47 115 81 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.3);
+  --bio-lumen-width: 1.5px;
+  background: var(--bio-primary-fill);
+  box-shadow: var(--bio-primary-glow), inset 0 1px 0 rgb(255 255 255 / 0.18);
 }
 .dock .railActive::before {
   display: none;
 }
 .dock .railItem[aria-current="page"] {
-  color: #fff;
-}
-[data-bio-environment="night"] .dock .railItem[aria-current="page"] {
-  color: var(--bio-color-carbon);
+  color: var(--bio-on-primary);
 }
 .dock .railBadge {
   position: absolute;
