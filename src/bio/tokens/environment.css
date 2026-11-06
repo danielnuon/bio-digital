@@ -1,0 +1,170 @@
+/*
+ * Environments (spec §17), materials (§5), and depth (§8).
+ * Day and night are distinct treatments, not inversions: each material is
+ * re-evaluated per environment. Semantic colour meaning is preserved.
+ */
+
+[data-bio-environment="day"] {
+  color-scheme: light;
+
+  /* environment / canvas (D0) */
+  --bio-canvas: var(--bio-color-cloud);
+  --bio-canvas-gradient:
+    radial-gradient(60vmax 50vmax at 8% -10%, rgb(167 207 186 / 0.34), transparent 70%),
+    radial-gradient(50vmax 45vmax at 105% 10%, rgb(169 188 226 / 0.26), transparent 70%),
+    radial-gradient(55vmax 50vmax at 60% 115%, rgb(165 199 203 / 0.24), transparent 70%);
+  --bio-ambient-opacity: 0.55;
+
+  /* text */
+  --bio-text: var(--bio-color-carbon);
+  --bio-text-muted: #5e6b65; /* ≥4.8:1 on every day surface */
+  --bio-text-inverse: var(--bio-color-cloud);
+
+  /* boundaries */
+  --bio-divider: var(--bio-color-stone); /* decorative separation */
+  --bio-boundary: #7d8a83; /* control boundaries, ≥3:1 (WCAG 1.4.11) */
+
+  /* semantic accents */
+  --bio-accent: var(--bio-color-growth);
+  --bio-accent-soft: rgb(167 207 186 / 0.35);
+  --bio-accent-ink: #2f7351;
+  --bio-primary: #2f7351;
+  --bio-primary-hover: #286447;
+  --bio-on-primary: var(--bio-color-cloud);
+
+  --bio-success: var(--bio-color-success);
+  --bio-warning: var(--bio-color-warning);
+  --bio-critical: var(--bio-color-critical);
+  --bio-information: var(--bio-color-information);
+  --bio-success-ink: #2f7351;
+  --bio-warning-ink: #8a6420;
+  --bio-critical-ink: #a8423f;
+  --bio-information-ink: #4569a8;
+  --bio-on-critical: var(--bio-color-cloud);
+  --bio-critical-fill: #a8423f;
+
+  --bio-focus: #4569a8;
+
+  /* material / porcelain — default, matte, stable */
+  --bio-porcelain-bg: #fdfdfb;
+  --bio-porcelain-border: rgb(37 45 43 / 0.07);
+  --bio-porcelain-highlight: inset 0 1px 0 rgb(255 255 255 / 0.9);
+
+  /* material / membrane — translucent, diffused */
+  --bio-membrane-bg: rgb(247 248 245 / 0.66);
+  --bio-membrane-bg-opaque: #f3f5f2;
+  --bio-membrane-border: rgb(255 255 255 / 0.7);
+  --bio-membrane-blur: 20px;
+  --bio-membrane-highlight: inset 0 1px 0 rgb(255 255 255 / 0.75);
+
+  /* material / crystal — clear, reflective, elevated (accent only) */
+  --bio-crystal-bg: linear-gradient(155deg, rgb(255 255 255 / 0.98), rgb(244 248 246 / 0.9) 55%, rgb(232 240 238 / 0.94));
+  --bio-crystal-border: rgb(255 255 255 / 1);
+  --bio-crystal-highlight: inset 0 1px 0 rgb(255 255 255 / 1), inset 0 -1px 0 rgb(37 45 43 / 0.04);
+  --bio-crystal-sheen: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.65) 46%, transparent 60%);
+
+  /* material / carbon — deep, grounding */
+  --bio-carbon-bg: var(--bio-color-carbon);
+  --bio-carbon-text: var(--bio-color-cloud);
+  --bio-carbon-muted: #b7c1bb;
+  --bio-carbon-border: rgb(255 255 255 / 0.06);
+
+  /* depth (§8.1) — one light source, top-centre; shadows stay consistent */
+  --bio-shadow-color: 150 18% 16%;
+  --bio-depth-0: 0 0 0 transparent;
+  --bio-depth-1: 0 1px 2px hsl(var(--bio-shadow-color) / 0.05);
+  --bio-depth-2: 0 1px 2px hsl(var(--bio-shadow-color) / 0.04), 0 6px 20px -4px hsl(var(--bio-shadow-color) / 0.08);
+  --bio-depth-3: 0 2px 6px hsl(var(--bio-shadow-color) / 0.06), 0 18px 44px -8px hsl(var(--bio-shadow-color) / 0.16);
+  --bio-depth-4: 0 4px 12px hsl(var(--bio-shadow-color) / 0.08), 0 34px 80px -12px hsl(var(--bio-shadow-color) / 0.26);
+  --bio-scrim: rgb(37 45 43 / 0.24);
+}
+
+[data-bio-environment="night"] {
+  color-scheme: dark;
+
+  /* never absolute black (§17.3) */
+  --bio-canvas: #1d2423;
+  --bio-canvas-gradient:
+    radial-gradient(60vmax 50vmax at 6% -12%, rgb(167 207 186 / 0.12), transparent 70%),
+    radial-gradient(50vmax 45vmax at 104% 8%, rgb(199 182 223 / 0.09), transparent 70%),
+    radial-gradient(55vmax 50vmax at 55% 118%, rgb(165 199 203 / 0.1), transparent 70%);
+  --bio-ambient-opacity: 0.4;
+
+  --bio-text: #f2f4f1;
+  --bio-text-muted: #9ba8a1;
+  --bio-text-inverse: var(--bio-color-carbon);
+
+  --bio-divider: rgb(255 255 255 / 0.08);
+  --bio-boundary: #7a8981;
+
+  --bio-accent: var(--bio-color-growth);
+  --bio-accent-soft: rgb(167 207 186 / 0.14);
+  --bio-accent-ink: #7fc4a0;
+  --bio-primary: var(--bio-color-growth);
+  --bio-primary-hover: #b8dac8;
+  --bio-on-primary: var(--bio-color-carbon);
+
+  --bio-success: #5aa57f;
+  --bio-warning: #c99a4c;
+  --bio-critical: #d86f6b;
+  --bio-information: #7d9fd8;
+  --bio-success-ink: #7fc4a0;
+  --bio-warning-ink: #e0b66e;
+  --bio-critical-ink: #ee8e8a;
+  --bio-information-ink: #9db8ea;
+  --bio-on-critical: var(--bio-color-carbon);
+  --bio-critical-fill: #ee8e8a;
+
+  --bio-focus: #9db8ea;
+
+  /* restrained translucency, subdued highlights (§17.2) */
+  --bio-porcelain-bg: #262f2d;
+  --bio-porcelain-border: rgb(255 255 255 / 0.06);
+  --bio-porcelain-highlight: inset 0 1px 0 rgb(255 255 255 / 0.04);
+
+  --bio-membrane-bg: rgb(40 49 47 / 0.7);
+  --bio-membrane-bg-opaque: #2a3331;
+  --bio-membrane-border: rgb(255 255 255 / 0.08);
+  --bio-membrane-blur: 24px;
+  --bio-membrane-highlight: inset 0 1px 0 rgb(255 255 255 / 0.06);
+
+  --bio-crystal-bg: linear-gradient(155deg, rgb(64 78 74 / 0.96), rgb(48 58 56 / 0.94) 55%, rgb(42 52 50 / 0.96));
+  --bio-crystal-border: rgb(255 255 255 / 0.14);
+  --bio-crystal-highlight: inset 0 1px 0 rgb(255 255 255 / 0.14), inset 0 -1px 0 rgb(0 0 0 / 0.2);
+  --bio-crystal-sheen: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.1) 46%, transparent 60%);
+
+  --bio-carbon-bg: #161c1b;
+  --bio-carbon-text: #f2f4f1;
+  --bio-carbon-muted: #9ba8a1;
+  --bio-carbon-border: rgb(255 255 255 / 0.05);
+
+  --bio-shadow-color: 160 20% 4%;
+  --bio-depth-0: 0 0 0 transparent;
+  --bio-depth-1: 0 1px 2px hsl(var(--bio-shadow-color) / 0.3);
+  --bio-depth-2: 0 1px 2px hsl(var(--bio-shadow-color) / 0.3), 0 8px 24px -6px hsl(var(--bio-shadow-color) / 0.4);
+  --bio-depth-3: 0 2px 6px hsl(var(--bio-shadow-color) / 0.35), 0 20px 48px -10px hsl(var(--bio-shadow-color) / 0.55);
+  --bio-depth-4: 0 4px 12px hsl(var(--bio-shadow-color) / 0.4), 0 36px 90px -12px hsl(var(--bio-shadow-color) / 0.7);
+  --bio-scrim: rgb(10 14 13 / 0.5);
+}
+
+/* Users who ask for less transparency get opaque membranes (§5.5 rule 6). */
+@media (prefers-reduced-transparency: reduce) {
+  [data-bio-environment] {
+    --bio-membrane-bg: var(--bio-membrane-bg-opaque);
+    --bio-membrane-blur: 0px;
+  }
+}
+
+/* Increased contrast: strengthen boundaries and muted text. */
+@media (prefers-contrast: more) {
+  [data-bio-environment="day"] {
+    --bio-text-muted: #3f4a45;
+    --bio-divider: #7d8a83;
+    --bio-porcelain-border: #7d8a83;
+  }
+  [data-bio-environment="night"] {
+    --bio-text-muted: #c6d0ca;
+    --bio-divider: #7a8981;
+    --bio-porcelain-border: #7a8981;
+  }
+}

@@ -1,0 +1,132 @@
+.surface {
+  --_depth: var(--bio-depth-1);
+  position: relative;
+  color: var(--bio-text);
+  border-radius: var(--bio-radius-r3);
+  transition:
+    box-shadow var(--bio-duration-state) var(--bio-ease-settle),
+    background-color var(--bio-duration-surface) var(--bio-ease-settle),
+    border-color var(--bio-duration-state) var(--bio-ease-settle);
+}
+
+/* ── materials (§5) ─────────────────────────────────────────── */
+.porcelain {
+  background: var(--bio-porcelain-bg);
+  border: 1px solid var(--bio-porcelain-border);
+  box-shadow: var(--_depth), var(--bio-porcelain-highlight);
+}
+
+.membrane {
+  background: var(--bio-membrane-bg);
+  border: 1px solid var(--bio-membrane-border);
+  box-shadow: var(--_depth), var(--bio-membrane-highlight);
+  -webkit-backdrop-filter: blur(var(--bio-membrane-blur)) saturate(1.4);
+  backdrop-filter: blur(var(--bio-membrane-blur)) saturate(1.4);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .membrane {
+    background: var(--bio-membrane-bg-opaque);
+  }
+}
+[data-bio-fidelity="lite"] .membrane {
+  background: var(--bio-membrane-bg-opaque);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.crystal {
+  background: var(--bio-crystal-bg);
+  border: 1px solid var(--bio-crystal-border);
+  box-shadow: var(--_depth), var(--bio-crystal-highlight);
+  overflow: hidden;
+}
+/* Controlled reflection: the sheen responds to proximity, never loops. */
+.crystal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--bio-crystal-sheen);
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  opacity: 0.6;
+  pointer-events: none;
+  transition:
+    background-position var(--bio-duration-spatial) var(--bio-ease-settle),
+    opacity var(--bio-duration-state) var(--bio-ease-settle);
+}
+.crystal:hover::after,
+.crystal:focus-within::after {
+  background-position: 0% 0;
+  opacity: 1;
+}
+
+.carbon {
+  background: var(--bio-carbon-bg);
+  border: 1px solid var(--bio-carbon-border);
+  box-shadow: var(--_depth);
+}
+.carbon[data-bio-carbon-parent="day"] {
+  background: var(--bio-color-carbon);
+}
+
+/* ── depth (§8) ─────────────────────────────────────────────── */
+.d0 {
+  --_depth: var(--bio-depth-0);
+}
+.d1 {
+  --_depth: var(--bio-depth-1);
+}
+.d2 {
+  --_depth: var(--bio-depth-2);
+}
+.d3 {
+  --_depth: var(--bio-depth-3);
+}
+.d4 {
+  --_depth: var(--bio-depth-4);
+}
+
+/* ── geometry (§7) ──────────────────────────────────────────── */
+.r1 {
+  border-radius: var(--bio-radius-r1);
+}
+.r2 {
+  border-radius: var(--bio-radius-r2);
+}
+.r3 {
+  border-radius: var(--bio-radius-r3);
+}
+.r4 {
+  border-radius: var(--bio-radius-r4);
+}
+.r5 {
+  border-radius: var(--bio-radius-r5);
+}
+.r6 {
+  border-radius: var(--bio-radius-r6);
+}
+.pill {
+  border-radius: var(--bio-radius-pill);
+}
+.organic {
+  border-radius: var(--bio-radius-organic);
+}
+
+/* ── padding ────────────────────────────────────────────────── */
+.padNone {
+  padding: 0;
+}
+.padSm {
+  padding: var(--bio-space-3);
+}
+.padMd {
+  padding: var(--bio-space-5);
+}
+.padLg {
+  padding: var(--bio-space-8);
+}
+.padDensity {
+  padding: var(--bio-density-pad);
+  transition: padding var(--bio-duration-surface) var(--bio-ease-settle);
+}

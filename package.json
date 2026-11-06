@@ -1,0 +1,48 @@
+{
+  "name": "bio-digital",
+  "version": "0.1.0",
+  "description": "BIO DIGITAL design language: a React component library and demo dashboard. Technology, naturally alive.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "./dist-lib/bio-digital.js",
+  "module": "./dist-lib/bio-digital.js",
+  "types": "./dist-lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist-lib/types/index.d.ts",
+      "import": "./dist-lib/bio-digital.js"
+    },
+    "./styles.css": "./dist-lib/bio-digital.css"
+  },
+  "sideEffects": ["**/*.css"],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "build:lib": "vite build --config vite.lib.config.ts && tsc -p tsconfig.lib.json",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "motion": ">=12",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "dependencies": {
+    "motion": "14.10.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/react": "16.3.3",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "6.2.1",
+    "axe-core": "4.14.0",
+    "jsdom": "^26",
+    "typescript": "5.9.3",
+    "vite": "8.3.6",
+    "vitest": "5.1.0"
+  }
+}
