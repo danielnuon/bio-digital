@@ -1,0 +1,78 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: var(--bio-space-6);
+  flex-wrap: wrap;
+}
+.figure {
+  position: relative;
+  flex-shrink: 0;
+}
+.svg {
+  display: block;
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+.track {
+  fill: none;
+  opacity: 0.16;
+}
+.arc {
+  fill: none;
+  stroke-linecap: round;
+}
+.center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  line-height: 1;
+}
+.centerValue {
+  font-family: var(--bio-font-rounded);
+  font-size: var(--bio-type-h3);
+  font-weight: var(--bio-weight-bold);
+  letter-spacing: var(--bio-tracking-title);
+  font-variant-numeric: tabular-nums;
+}
+.centerLabel {
+  margin-top: 4px;
+  font-size: var(--bio-type-caption);
+  color: var(--bio-text-muted);
+}
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bio-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+.item {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  column-gap: var(--bio-space-3);
+  align-items: baseline;
+}
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  align-self: center;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--_c) 18%, transparent);
+  background: var(--_c);
+}
+.itemLabel {
+  font-size: var(--bio-type-caption);
+  color: var(--bio-text-muted);
+  letter-spacing: 0.02em;
+}
+.itemValue {
+  grid-column: 2;
+  font-family: var(--bio-font-rounded);
+  font-size: var(--bio-type-title);
+  font-weight: var(--bio-weight-bold);
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "dist-lib/types",
+    "rootDir": "src/bio"
+  },
+  "include": ["src/bio"],
+  "exclude": ["src/bio/**/*.test.ts", "src/bio/**/*.test.tsx"]
+}

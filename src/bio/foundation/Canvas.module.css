@@ -1,0 +1,119 @@
+.canvas {
+  position: relative;
+  min-height: 100dvh;
+  isolation: isolate;
+  background: var(--bio-canvas);
+  color: var(--bio-text);
+  transition: background-color var(--bio-duration-surface) var(--bio-ease-settle);
+}
+
+/* Layer 1 — Environment: static gradient, low-frequency ambient forms. */
+.environment {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--bio-canvas-gradient), var(--bio-canvas);
+}
+
+/* Registered so mood changes cross-fade instead of snapping. */
+@property --bio-mood-a {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(143 208 173 / 0.85);
+}
+@property --bio-mood-b {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(142 169 223 / 0.7);
+}
+@property --bio-mood-c {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(199 182 223 / 0.65);
+}
+
+.canvas {
+  transition:
+    background-color var(--bio-duration-surface) var(--bio-ease-settle),
+    --bio-mood-a 2.4s var(--bio-ease-ambient),
+    --bio-mood-b 2.4s var(--bio-ease-ambient),
+    --bio-mood-c 2.4s var(--bio-ease-ambient);
+}
+
+/* Static grain: stops large gradients banding, gives the canvas tooth. */
+.environment::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--bio-grain);
+  opacity: var(--bio-grain-opacity);
+  mix-blend-mode: overlay;
+}
+
+.form {
+  position: absolute;
+  width: 58vmax;
+  height: 58vmax;
+  border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+  opacity: var(--bio-ambient-opacity);
+  will-change: transform;
+  animation: drift var(--bio-duration-ambient-slow) var(--bio-ease-ambient) infinite alternate;
+}
+
+.form1 {
+  top: -18vmax;
+  left: -12vmax;
+  background: radial-gradient(closest-side, var(--bio-mood-a), transparent);
+}
+.form2 {
+  top: 8vmax;
+  right: -20vmax;
+  background: radial-gradient(closest-side, var(--bio-mood-b), transparent);
+  animation-duration: calc(var(--bio-duration-ambient-slow) * 1.3);
+  animation-delay: -6s;
+}
+.form3 {
+  bottom: -26vmax;
+  left: 28vmax;
+  background: radial-gradient(closest-side, var(--bio-mood-c), transparent);
+  animation-duration: calc(var(--bio-duration-ambient-slow) * 1.6);
+  animation-delay: -12s;
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(6vmax, 4vmax, 0) rotate(18deg) scale(1.1);
+  }
+  100% {
+    transform: translate3d(-4vmax, 7vmax, 0) rotate(-10deg) scale(0.94);
+  }
+}
+
+/* Reduced motion keeps depth through static treatment (§18.2). */
+[data-bio-motion="reduced"] .form {
+  animation: none;
+}
+/* Constrained hardware drops the ambient layer, keeps the gradient (§19.3). */
+[data-bio-fidelity="lite"] .form {
+  display: none;
+}
+
+/* Spatial recession while a focus layer (modal/drawer) is open (§12.5). */
+.recede {
+  transform-origin: 50% 30vh;
+  transition:
+    transform var(--bio-duration-spatial) var(--bio-ease-settle),
+    opacity var(--bio-duration-surface) var(--bio-ease-settle);
+}
+[data-bio-spatial="focused"] .recede {
+  transform: scale(0.985);
+  opacity: 0.86;
+}
+[data-bio-motion="reduced"][data-bio-spatial="focused"] .recede {
+  transform: none;
+}

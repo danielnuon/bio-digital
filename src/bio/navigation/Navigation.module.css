@@ -1,0 +1,366 @@
+/* ── tabs ───────────────────────────────────────────────────── */
+.tablist {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--bio-radius-pill);
+  background: color-mix(in srgb, var(--bio-color-stone) 55%, transparent);
+  border: 1px solid var(--bio-porcelain-border);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+[data-bio-environment="night"] .tablist {
+  background: rgb(0 0 0 / 0.22);
+}
+.tab {
+  position: relative;
+  min-height: 36px;
+  padding: 0 var(--bio-space-4);
+  border: 0;
+  border-radius: var(--bio-radius-pill);
+  background: transparent;
+  color: var(--bio-text-muted);
+  font: inherit;
+  font-size: var(--bio-type-supporting);
+  font-weight: var(--bio-weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--bio-duration-state) var(--bio-ease-settle);
+}
+.tab::before {
+  content: "";
+  position: absolute;
+  inset: -4px 0;
+}
+.tab[aria-selected="true"],
+.tab:hover {
+  color: var(--bio-text);
+}
+.tab:focus-visible {
+  outline-offset: -2px;
+}
+.tabText {
+  position: relative;
+  z-index: 1;
+}
+.tabIndicator {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--bio-porcelain-bg);
+  box-shadow: var(--bio-depth-2), var(--bio-porcelain-highlight);
+}
+[data-bio-environment="night"] .tabIndicator {
+  background: #3a4643;
+}
+
+/* ── navigation rail ────────────────────────────────────────── */
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bio-space-2);
+}
+.railList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bio-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.railItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--bio-space-3);
+  width: 100%;
+  min-height: var(--bio-target-min);
+  padding: 0 var(--bio-space-3);
+  border: 0;
+  border-radius: var(--bio-radius-r2);
+  background: transparent;
+  color: var(--bio-text-muted);
+  font: inherit;
+  font-size: var(--bio-type-supporting);
+  font-weight: var(--bio-weight-medium);
+  text-align: start;
+  cursor: pointer;
+  transition: color var(--bio-duration-state) var(--bio-ease-settle);
+}
+.railItem:hover,
+.railItem[aria-current="page"] {
+  color: var(--bio-text);
+}
+.railIcon {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+}
+.railIcon svg {
+  width: 20px;
+  height: 20px;
+}
+.railLabel {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+.railBadge {
+  position: relative;
+  z-index: 1;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: var(--bio-radius-pill);
+  background: var(--bio-accent-soft);
+  color: var(--bio-accent-ink);
+  font-size: var(--bio-type-caption);
+  font-weight: var(--bio-weight-semibold);
+  text-align: center;
+  line-height: 20px;
+}
+.railActive {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--bio-porcelain-bg);
+  box-shadow: var(--bio-depth-1), var(--bio-porcelain-highlight);
+}
+.railActive::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--bio-primary);
+}
+
+/* Narrow viewports: the rail becomes a bottom tab bar (§19.1). */
+@media (max-width: 760px) {
+  .rail[data-responsive="true"] .railList {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  .rail[data-responsive="true"] .railItem {
+    flex-direction: column;
+    gap: 2px;
+    min-height: 56px;
+    padding: 6px 4px;
+    font-size: var(--bio-type-caption);
+    text-align: center;
+    justify-content: center;
+  }
+  .rail[data-responsive="true"] .railLabel {
+    flex: none;
+  }
+  .rail[data-responsive="true"] .railBadge {
+    position: absolute;
+    top: 4px;
+    right: calc(50% - 22px);
+    min-width: 16px;
+    line-height: 16px;
+    padding: 0 4px;
+  }
+  .rail[data-responsive="true"] .railActive::before {
+    left: 30%;
+    right: 30%;
+    top: auto;
+    bottom: 2px;
+    width: auto;
+    height: 3px;
+  }
+}
+
+/* ── breadcrumbs ────────────────────────────────────────────── */
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--bio-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--bio-type-supporting);
+  color: var(--bio-text-muted);
+}
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bio-space-1);
+}
+.crumbLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--bio-radius-r1);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.crumbLink:hover {
+  color: var(--bio-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.crumbCurrent {
+  padding: 0 6px;
+  color: var(--bio-text);
+  font-weight: var(--bio-weight-medium);
+}
+.crumbSep {
+  width: 14px;
+  height: 14px;
+  opacity: 0.7;
+}
+
+/* ── contextual menu ────────────────────────────────────────── */
+.menuWrap {
+  position: relative;
+  display: inline-flex;
+}
+.menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: 50;
+  min-width: 220px;
+  margin: 0;
+  padding: var(--bio-space-1);
+  list-style: none;
+}
+.menu[data-align="end"] {
+  right: 0;
+  transform-origin: top right;
+}
+.menu[data-align="start"] {
+  left: 0;
+  transform-origin: top left;
+}
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--bio-space-3);
+  width: 100%;
+  min-height: var(--bio-target-min);
+  padding: 0 var(--bio-space-3);
+  border: 0;
+  border-radius: var(--bio-radius-r2);
+  background: transparent;
+  color: var(--bio-text);
+  font: inherit;
+  font-size: var(--bio-type-supporting);
+  text-align: start;
+  cursor: pointer;
+}
+.menuItem:hover,
+.menuItem:focus-visible {
+  background: var(--bio-accent-soft);
+}
+.menuItem:focus-visible {
+  outline-offset: -2px;
+}
+.menuItem[data-destructive="true"] {
+  color: var(--bio-critical-ink);
+}
+.menuItem svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.menuShortcut {
+  margin-inline-start: auto;
+  color: var(--bio-text-muted);
+  font-size: var(--bio-type-caption);
+}
+.menuSep {
+  height: 1px;
+  margin: var(--bio-space-1) var(--bio-space-2);
+  background: var(--bio-divider);
+}
+
+/* ── dock variant: a floating glass capsule ─────────────────────── */
+.dock {
+  padding: 8px;
+  /* concentric with the screen corner when docked against it */
+  border-radius: max(var(--bio-radius-r5), calc(var(--bio-device-radius) - var(--bio-edge-gap)));
+  --bio-outer-radius: max(var(--bio-radius-r5), calc(var(--bio-device-radius) - var(--bio-edge-gap)));
+  --bio-outer-pad: 8px;
+  background: var(--bio-membrane-bg);
+  border: 1px solid var(--bio-membrane-border);
+  box-shadow: var(--bio-depth-3), var(--bio-membrane-highlight);
+  -webkit-backdrop-filter: var(--bio-membrane-filter);
+  backdrop-filter: var(--bio-membrane-filter);
+}
+[data-bio-fidelity="lite"] .dock {
+  background: var(--bio-membrane-bg-opaque);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.dock .railList {
+  gap: 4px;
+}
+.dock .railItem {
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 72px;
+  min-height: 64px;
+  padding: 8px 4px;
+  /* inner = outer − padding, so items nest concentrically in the dock */
+  border-radius: max(var(--bio-radius-r3), calc(var(--bio-outer-radius) - var(--bio-outer-pad)));
+  font-size: 11px;
+  font-weight: var(--bio-weight-semibold);
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+.dock .railLabel {
+  flex: none;
+}
+.dock .railIcon svg {
+  width: 24px;
+  height: 24px;
+}
+.dock .railActive {
+  background: var(--bio-fill-growth);
+  box-shadow: 0 8px 20px -8px rgb(47 115 81 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.3);
+}
+.dock .railActive::before {
+  display: none;
+}
+.dock .railItem[aria-current="page"] {
+  color: #fff;
+}
+[data-bio-environment="night"] .dock .railItem[aria-current="page"] {
+  color: var(--bio-color-carbon);
+}
+.dock .railBadge {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  min-width: 18px;
+  line-height: 18px;
+  padding: 0 5px;
+  background: var(--bio-critical-fill);
+  color: var(--bio-on-critical);
+  box-shadow: 0 0 0 2px var(--bio-porcelain-solid);
+}
+@media (max-width: 760px) {
+  .dock[data-responsive="true"] .railList {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  .dock[data-responsive="true"] .railItem {
+    width: auto;
+    min-width: 64px;
+    flex: 1;
+    min-height: 56px;
+  }
+  .dock[data-responsive="true"] .railActive::before {
+    display: none;
+  }
+}

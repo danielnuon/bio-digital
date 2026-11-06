@@ -1,0 +1,226 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bio-space-1);
+  min-width: 0;
+}
+.label {
+  font-size: var(--bio-type-supporting);
+  font-weight: var(--bio-weight-medium);
+}
+.description {
+  font-size: var(--bio-type-caption);
+  color: var(--bio-text-muted);
+}
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--bio-space-1);
+  font-size: var(--bio-type-caption);
+  font-weight: var(--bio-weight-medium);
+  color: var(--bio-critical-ink);
+}
+.error svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--bio-space-2);
+  min-height: var(--bio-target-min);
+  padding: 0 var(--bio-space-4);
+  border: 1px solid var(--bio-boundary);
+  border-radius: var(--bio-radius-r2);
+  background: var(--bio-porcelain-bg);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.04);
+  transition:
+    border-color var(--bio-duration-state) var(--bio-ease-settle),
+    box-shadow var(--bio-duration-state) var(--bio-ease-settle);
+}
+.box:hover {
+  border-color: var(--bio-text-muted);
+}
+/* Focus glow: illumination, not decoration (§4.3). */
+.box:focus-within {
+  border-color: var(--bio-focus);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--bio-focus) 22%, transparent),
+    inset 0 1px 2px rgb(0 0 0 / 0.04);
+}
+.box[data-invalid="true"] {
+  border-color: var(--bio-critical-ink);
+}
+.box[data-invalid="true"]:focus-within {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--bio-critical) 22%, transparent);
+}
+.box[data-disabled="true"] {
+  opacity: 0.55;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  min-height: calc(var(--bio-target-min) - 2px);
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--bio-text);
+  font: inherit;
+  font-size: var(--bio-type-body);
+}
+.input::placeholder {
+  color: var(--bio-text-muted);
+  opacity: 1;
+}
+/* The container shows focus, so the inner outline is redundant here. */
+.input:focus-visible {
+  outline: none;
+}
+.adornment {
+  display: inline-flex;
+  color: var(--bio-text-muted);
+  font-size: var(--bio-type-supporting);
+}
+.adornment svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── checkbox ───────────────────────────────────────────────── */
+.check {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--bio-space-3);
+  min-height: var(--bio-target-min);
+  padding-block: 10px;
+  cursor: pointer;
+}
+.checkNative {
+  position: absolute;
+  top: 0;
+  left: -10px;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.checkBox {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border: 1.5px solid var(--bio-boundary);
+  border-radius: var(--bio-radius-r1);
+  background: var(--bio-porcelain-bg);
+  color: var(--bio-on-primary);
+  transition:
+    background-color var(--bio-duration-state) var(--bio-ease-settle),
+    border-color var(--bio-duration-state) var(--bio-ease-settle);
+}
+.checkNative:checked + .checkBox {
+  background: var(--bio-primary);
+  border-color: var(--bio-primary);
+}
+.checkNative:focus-visible + .checkBox {
+  outline: var(--bio-focus-width) solid var(--bio-focus);
+  outline-offset: var(--bio-focus-offset);
+}
+.checkNative:disabled,
+.checkNative:disabled ~ * {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.checkBox svg {
+  width: 14px;
+  height: 14px;
+}
+.checkText {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--bio-type-supporting);
+  line-height: 1.4;
+}
+
+/* ── segmented selection ────────────────────────────────────── */
+.segmented {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  margin: 0;
+  border: 1px solid var(--bio-porcelain-border);
+  border-radius: var(--bio-radius-pill);
+  background: color-mix(in srgb, var(--bio-color-stone) 55%, transparent);
+  min-width: 0;
+}
+[data-bio-environment="night"] .segmented {
+  background: rgb(0 0 0 / 0.22);
+}
+.segmentedLegend {
+  composes: bio-visually-hidden from global;
+}
+.segment {
+  position: relative;
+  display: inline-flex;
+}
+.segmentInput {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+.segmentLabel {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 var(--bio-space-4);
+  font-size: var(--bio-type-supporting);
+  font-weight: var(--bio-weight-medium);
+  color: var(--bio-text-muted);
+  border-radius: var(--bio-radius-pill);
+  white-space: nowrap;
+  transition: color var(--bio-duration-state) var(--bio-ease-settle);
+}
+.segmentLabel svg {
+  width: 16px;
+  height: 16px;
+}
+.segmentInput:checked ~ .segmentLabel {
+  color: var(--bio-text);
+}
+.segmentInput:hover ~ .segmentLabel {
+  color: var(--bio-text);
+}
+.segmentInput:focus-visible ~ .segmentLabel {
+  outline: var(--bio-focus-width) solid var(--bio-focus);
+  outline-offset: 0;
+}
+.indicator {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: var(--bio-radius-pill);
+  background: var(--bio-porcelain-bg);
+  box-shadow: var(--bio-depth-2), var(--bio-porcelain-highlight);
+}
+[data-bio-environment="night"] .indicator {
+  background: #3a4643;
+}
+.compactSeg .segmentLabel {
+  min-height: 32px;
+  padding: 0 var(--bio-space-3);
+  font-size: var(--bio-type-caption);
+}
