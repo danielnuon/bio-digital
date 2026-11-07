@@ -153,8 +153,8 @@ export function LivingField({ still = false, onUnsupported, className }: LivingF
     const cur = { base: [0.97, 0.97, 0.96, 1] as RGBA, a: [0, 0, 0, 0] as RGBA, b: [0, 0, 0, 0] as RGBA, c: [0, 0, 0, 0] as RGBA, sheen: 0, top: 0 };
     let target = { ...cur };
     let first = true;
-    // Frame at which to publish the environment map next (see below).
-    let publishAt = 2;
+    // When to publish the environment map next (ms timestamp; see below).
+    let publishAt = 0;
     let sig = "";
     const read = () => {
       const cs = getComputedStyle(host);
@@ -174,7 +174,15 @@ export function LivingField({ still = false, onUnsupported, className }: LivingF
       // Tokens changed: publish once the colours have eased (~1.5 s).
       const next = JSON.stringify([target.base, target.a, target.b, target.c, target.top]);
       if (next !== sig) {
-        if (sig) publishAt = frames + 48;
+        if (sig) {
+          // The old map belongs to the previous environment: a day map on
+          // night surfaces washes them out. Drop it now, republish once the
+          // colours have eased (time-based, so slow devices wait as long).
+          const root = document.documentElement.style;
+          root.removeProperty("--bio-env-image");
+          root.removeProperty("--bio-env-light");
+          publishAt = performance.now() + 1700;
+        }
         sig = next;
       }
     };
@@ -224,7 +232,10 @@ export function LivingField({ still = false, onUnsupported, className }: LivingF
       // Only at start and after a change of environment or mood: each
       // publish swaps an image on every surface, which costs a repaint of
       // all of them, so a periodic refresh showed up as a regular hitch.
-      if (frames === publishAt || still) publishEnvironment(canvas);
+      if (still || (publishAt >= 0 && now >= publishAt)) {
+        publishEnvironment(canvas);
+        publishAt = -1;
+      }
       if (!still && !document.hidden) raf = requestAnimationFrame(draw);
     };
     const onVisible = () => {

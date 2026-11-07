@@ -25,7 +25,7 @@
 
   /* text */
   --bio-text: var(--bio-color-carbon);
-  --bio-text-muted: #5e6b65; /* ≥4.8:1 on every day surface */
+  --bio-text-muted: #4d5953; /* ≥4.5:1 over the living field at its lightest, measured */
   --bio-text-inverse: var(--bio-color-cloud);
 
   /* boundaries */
@@ -43,7 +43,7 @@
   --bio-on-primary: var(--bio-color-cloud);
 
   /* accent ink: each accent's hue, deep enough for text (≥5.2:1 on Mist) */
-  --bio-ink-growth: #2f6e50;
+  --bio-ink-growth: #2a6347;
   --bio-ink-water: #28666e;
   --bio-ink-air: #3e5d9c;
   --bio-ink-bloom: #69539a;
@@ -61,10 +61,10 @@
   --bio-warning: var(--bio-color-warning);
   --bio-critical: var(--bio-color-critical);
   --bio-information: var(--bio-color-information);
-  --bio-success-ink: #2f7351;
-  --bio-warning-ink: #8a6420;
+  --bio-success-ink: #286646;
+  --bio-warning-ink: #77561a;
   --bio-critical-ink: #a8423f;
-  --bio-information-ink: #4569a8;
+  --bio-information-ink: #3b5d98;
   --bio-on-critical: var(--bio-color-cloud);
   --bio-critical-fill: #a8423f;
 
@@ -142,7 +142,7 @@
   --bio-mood-c: rgb(120 134 128 / 0.18);
 
   --bio-text: #f2f4f1;
-  --bio-text-muted: #9ba8a1;
+  --bio-text-muted: #bcc6c1; /* ≥4.5:1 over the living field at its lightest, measured */
   --bio-text-inverse: var(--bio-color-carbon);
 
   --bio-divider: rgb(255 255 255 / 0.08);
@@ -176,7 +176,7 @@
   --bio-information: #7d9fd8;
   --bio-success-ink: #7fc4a0;
   --bio-warning-ink: #e0b66e;
-  --bio-critical-ink: #ee8e8a;
+  --bio-critical-ink: #f29c98;
   --bio-information-ink: #9db8ea;
   --bio-on-critical: var(--bio-color-carbon);
   --bio-critical-fill: #ee8e8a;

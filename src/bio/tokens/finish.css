@@ -98,7 +98,7 @@
     0 0,
     0 0;
   background-repeat: no-repeat, no-repeat, no-repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
-  background-blend-mode: normal, var(--_pearl-blend), normal, normal, normal, normal, normal, normal, normal;
+  background-blend-mode: normal, var(--_pearl-blend), var(--_reflect-blend, normal), normal, normal, normal, normal, normal, normal;
 }
 
 /* Edge light. Like the rim of a glass, every surface's edge catches the
@@ -147,7 +147,7 @@
 }
 [data-bio-environment="night"] [data-bio-finish="chroma"],
 [data-bio-environment="night"][data-bio-finish="chroma"] {
-  --_pearl-a: 0.2;
+  --_pearl-a: 0.11;
   --_gloss: 0.1;
 }
 
@@ -161,6 +161,8 @@
 [data-bio-environment="night"] [data-bio-finish="candy"],
 [data-bio-environment="night"][data-bio-finish="candy"] {
   --_gloss: 0.35;
+  /* a softer wet sheen: at full strength it sat behind text at under 4.5:1 */
+  --_candy: linear-gradient(165deg, rgb(255 255 255 / 0.1), transparent 45%);
 }
 
 /* Satin: a low-gloss finish for supporting surfaces; no flake. */

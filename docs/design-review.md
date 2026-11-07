@@ -124,6 +124,33 @@ Feedback: no mock data; the demo should focus on the component library and its f
 
 Measured in headless Chromium with software rendering, wheel-scrolling the Information family: median frame 16.7 ms (60 fps), 95th percentile 33 ms. Before this pass the page ran at about 19 to 30 fps in the same setup. That is not a measurement on an iPhone. Trade-off: a surface's reflection no longer slides as it scrolls.
 
+## Pass 12: QC and validation
+
+Checked in a real browser (headless Chromium), not only jsdom: every view and component family, day and night, at 320, 375, 393 (iPhone 15 Pro), 768, 1024, 1360 and 1920 px.
+
+**Method**
+- Static: `tsc -b`, 12 unit and axe tests, demo and library builds.
+- axe-core in the browser on every view and family, both environments, desktop and iPhone.
+- Rendered contrast: axe skips text over gradients and images, which is nearly all text here. So each text run was measured against the pixels actually behind it (text hidden, page screenshotted, 10th-percentile worst background pixel), 3,318 samples per run, against WCAG AA (4.5:1, or 3:1 for large text).
+- 38 end-to-end checks: keyboard focus on every tab stop, modal/drawer/popover/menu open, Escape and focus return, focus trap, toast and island, tabs arrow keys, breadcrumbs, control tiles, loading state, input validation and `aria-invalid`, slider keys, list selection, card stack, playground code output, mood, OS reduced motion, and style writes while idle and while scrolling.
+
+**Found and fixed**
+
+| Finding | Cause | Fix |
+|---|---|---|
+| After switching to night, surfaces were washed grey for a moment; text fell to 1.5–2.2:1. | The day environment map stayed on night surfaces until the field republished, which took longer on slow devices. | The old map is dropped the moment the environment or mood changes, and the new one is published 1.7 s later by clock, not frame count. |
+| Carbon cards by day were grey, not carbon; muted text 2.4:1. | The light environment reflection was composited over the dark base. | Carbon blends its reflection with `soft-light`, so it tints instead of greying. |
+| Muted text over the living field measured 3.9–4.3:1 by day and 3.5–4.3:1 by night. | The field's lightest areas are lighter than the surface the tokens were checked against. | Day `--bio-text-muted` #5e6b65 → #4d5953; night #9ba8a1 → #bcc6c1. |
+| Status pills and the active tab label measured 4.2–4.5:1. | Inks sat on tinted fills. | Day growth, success, warning and information inks darkened about one step; night critical lightened. |
+| Night candy and chroma finishes put text at 3.6–4.2:1. | Sheen and pearl too strong on dark surfaces. | Night candy sheen 0.28 → 0.1; night chroma pearl 0.2 → 0.11. |
+| The physics arena was a light panel at night (hint text 1.75:1). | No night style. | Night style added. |
+| At 320 px, cards were clipped on the right; the tab bar's last label was cut. | Fixed grid minimums (320 px) and a fixed 52 px active pill. | Grid minimums cap at 100%; under 360 px tab labels drop to 10 px and the pill to 44 px. |
+| Code samples could not be scrolled by keyboard (axe, serious). | Scrollable `pre` was not focusable. | `tabIndex={0}` and a label. |
+
+**Result after fixes:** 0 axe violations in every view, family, environment and device; 0 of 3,318 text samples under AA; no horizontal scroll from 320 to 1920 px; 0 console errors; 0 style writes while idle or scrolling; under OS reduced motion, no animation loop runs.
+
+**Not covered:** real iPhone hardware (frame rate, tilt, corner radius), VoiceOver and TalkBack reading order, Windows High Contrast, and browsers other than Chromium. The contrast method samples pixels, so it is a measurement of this render, not a proof for every frame of the moving field; the margin is small in a few places (4.5–4.7:1).
+
 ## Spec compliance, re-checked after v2
 
 - **Accessibility (§18):** axe runs on every view in tests with no violations. Rings use `role="meter"` with value text. The Island is a polite live region. Gestures keep their button alternatives.

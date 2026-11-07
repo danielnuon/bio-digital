@@ -423,3 +423,18 @@
     min-height: 52px;
   }
 }
+/* Five destinations on the smallest phones: let items shrink, tighten labels. */
+@media (max-width: 760px) {
+  .dock[data-responsive="true"] .railItem {
+    min-width: 0;
+  }
+}
+@media (max-width: 360px) {
+  .dock[data-responsive="true"] .railLabel {
+    font-size: 0.625rem;
+    letter-spacing: -0.01em;
+  }
+  .dock[data-responsive="true"] .railIcon {
+    width: 44px;
+  }
+}

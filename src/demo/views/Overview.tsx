@@ -133,7 +133,7 @@ export function Overview({ onNavigate }: { onNavigate: (v: View, f?: Family) => 
       </section>
 
       <Card className={s.span12} title="Quick start" eyebrow="React" headingLevel={2}>
-        <pre className={s.codeBlock}>
+        <pre className={s.codeBlock} tabIndex={0} aria-label="Code example">
           <code>{quickStart}</code>
         </pre>
       </Card>

@@ -69,6 +69,8 @@
 
 .carbon {
   --_base: var(--bio-carbon-bg);
+  /* a light environment tints carbon rather than greying it */
+  --_reflect-blend: soft-light;
   background: var(--bio-carbon-bg);
   border: 1px solid var(--bio-carbon-border);
   box-shadow: var(--_depth), inset 0 1px 0 rgb(255 255 255 / 0.06);

@@ -332,7 +332,7 @@
 
 .alerts {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
   gap: var(--bio-density-gap);
 }
 .alertBody {
@@ -416,7 +416,7 @@
 /* ── zones view ─────────────────────────────────────────────── */
 .zoneGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
   gap: var(--bio-density-gap);
   align-items: start;
 }
@@ -440,7 +440,7 @@
 }
 .zoneDetail {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
   gap: var(--bio-space-5);
   padding-top: var(--bio-space-4);
   border-top: 1px solid var(--bio-divider);
@@ -549,6 +549,12 @@
     color-mix(in srgb, var(--bio-color-stone) 30%, transparent);
   border: 1px solid var(--bio-porcelain-border);
 }
+:global([data-bio-environment="night"]) .arena {
+  background:
+    radial-gradient(circle at 20% 30%, rgb(167 207 186 / 0.1), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgb(199 182 223 / 0.08), transparent 45%),
+    rgb(0 0 0 / 0.18);
+}
 .arenaHint {
   position: absolute;
   right: var(--bio-space-4);
@@ -571,7 +577,7 @@
 /* ── library ────────────────────────────────────────────────── */
 .swatches {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr));
   gap: var(--bio-space-3);
 }
 .swatch {
@@ -620,7 +626,7 @@
 }
 .depths {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
   gap: var(--bio-space-5);
 }
 .depthTile {
@@ -632,7 +638,7 @@
 }
 .materials {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr));
   gap: var(--bio-density-gap);
 }
 .materialStage {
@@ -656,7 +662,7 @@
 }
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: var(--bio-density-gap);
   align-items: start;
 }
@@ -668,7 +674,7 @@
 }
 .pillars {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
   gap: var(--bio-density-gap);
 }
 .pillarIndex {
@@ -736,7 +742,7 @@
 }
 .families {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
   gap: var(--bio-density-gap);
 }
 .familyNames {
@@ -758,7 +764,7 @@
 }
 .specGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: var(--bio-density-gap);
   align-items: start;
 }

@@ -123,7 +123,7 @@ function FoundationFamily() {
             </span>
           </span>
         </Surface>
-        <pre className={s.codeBlock}>
+        <pre className={s.codeBlock} tabIndex={0} aria-label="Code example">
           <code>{code}</code>
         </pre>
       </Card>
