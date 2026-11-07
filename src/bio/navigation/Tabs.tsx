@@ -1,4 +1,4 @@
-import { useId, useRef, type HTMLAttributes, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useId, useRef, type HTMLAttributes, type KeyboardEvent, type ReactNode } from "react";
 import { LayoutGroup, motion } from "motion/react";
 import { useBioMotion } from "../physics/useBioMotion";
 import { cx } from "../utils/cx";
@@ -27,6 +27,38 @@ export function Tabs<T extends string>({ label, value, onChange, items, idBase, 
   const group = useId();
   const m = useBioMotion("membrane");
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // When the tabs don't fit, the list scrolls. Edges fade only on the side
+  // that has more, so the overflow reads as "there's more this way".
+  useEffect(() => {
+    const list = listRef.current;
+    const wrap = wrapRef.current;
+    if (!list || !wrap) return;
+    const update = () => {
+      const max = list.scrollWidth - list.clientWidth;
+      wrap.toggleAttribute("data-fade-start", list.scrollLeft > 2);
+      wrap.toggleAttribute("data-fade-end", list.scrollLeft < max - 2);
+    };
+    update();
+    list.addEventListener("scroll", update, { passive: true });
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
+    ro?.observe(list);
+    return () => {
+      list.removeEventListener("scroll", update);
+      ro?.disconnect();
+    };
+  }, []);
+
+  // Keep the selected tab in view, centred when the list overflows.
+  useEffect(() => {
+    const list = listRef.current;
+    const i = items.findIndex((it) => it.value === value);
+    const el = refs.current[i];
+    if (!list || !el || list.scrollWidth <= list.clientWidth || typeof list.scrollTo !== "function") return;
+    list.scrollTo({ left: el.offsetLeft - (list.clientWidth - el.offsetWidth) / 2, behavior: m.reduced ? "auto" : "smooth" });
+  }, [value, items, m.reduced]);
 
   const onKeyDown = (e: KeyboardEvent, i: number) => {
     let next = -1;
@@ -42,7 +74,8 @@ export function Tabs<T extends string>({ label, value, onChange, items, idBase, 
 
   return (
     <LayoutGroup id={group}>
-      <div role="tablist" aria-label={label} className={cx(styles.tablist, className)}>
+      <div ref={wrapRef} className={cx(styles.tabsWrap, className)}>
+      <div ref={listRef} role="tablist" aria-label={label} className={styles.tablist}>
         {items.map((it, i) => {
           const selected = it.value === value;
           return (
@@ -66,6 +99,7 @@ export function Tabs<T extends string>({ label, value, onChange, items, idBase, 
             </button>
           );
         })}
+      </div>
       </div>
     </LayoutGroup>
   );

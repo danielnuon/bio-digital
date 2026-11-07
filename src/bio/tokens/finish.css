@@ -23,6 +23,10 @@
  * strength, and only neighbouring hues, so finishes read as depth and
  * quality rather than effect.
  *
+ * Every Surface and Card also reflects its surroundings (layer 2½):
+ * the living background behind it shows faintly in its body, and its edge
+ * catches the light at that spot. See useReflectionPlacement.
+ *
  * Usage: data-bio-finish="pearl" | "chroma" | "candy" | "satin"
  * on a Surface/Card (finish prop), or on any element that sets --_base.
  */
@@ -47,17 +51,20 @@
 [data-bio-environment="day"] {
   --bio-flake: linear-gradient(transparent, transparent);
   --_gloss: 0;
-  --_pearl-a: 0.1;
+  --_pearl-a: 0;
   --_pearl-blend: normal;
+  --_edge-light: linear-gradient(175deg, rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.15) 30%, transparent 60%);
+  --_env-body: 1;
 }
 [data-bio-environment="night"] {
   --bio-flake: linear-gradient(transparent, transparent);
   --_gloss: 0;
-  --_pearl-a: 0.06;
+  --_pearl-a: 0;
   --_pearl-blend: screen;
+  --_edge-light: linear-gradient(175deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.03) 30%, transparent 60%);
 }
 
-[data-bio-fidelity="full"] [data-bio-finish] {
+[data-bio-fidelity="full"] :is([data-bio-finish], [data-bio-reflect]) {
   --_clear: radial-gradient(
     150% 70% at calc(22% + var(--bio-view-x) * 34%) calc(-18% + var(--bio-view-y) * 8%),
     rgb(255 255 255 / var(--_gloss)),
@@ -73,22 +80,56 @@
     rgb(167 207 186 / var(--_pearl-a))
   );
   --_candy: linear-gradient(transparent, transparent);
-  background-image: var(--_clear), var(--_pearl), var(--bio-flake), var(--_candy), var(--_base, var(--bio-porcelain-bg));
-  background-size: 100% 100%, 320% 320%, 140px 140px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  /* reflection: the environment behind the surface, at viewport scale and
+     offset by the surface's own position (useReflectionPlacement) */
+  --_reflect: var(--bio-env-image, linear-gradient(transparent, transparent));
+  background-image: var(--_clear), var(--_pearl), var(--_reflect), var(--bio-flake), var(--_candy), var(--_base, var(--bio-porcelain-bg));
+  background-size: 100% 100%, 320% 320%, 100vw 100vh, 140px 140px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
   /* each layer moves at its own rate: pearl flops widely, flake drifts a few
      pixels beneath the clearcoat, the base stays put. That differential is
      what reads as depth in the paint. */
   background-position:
     0 0,
     calc(50% + var(--bio-view-x) * 46%) calc(50% + var(--bio-view-y) * 30%),
+    var(--bio-rx, 0px) var(--bio-ry, 0px),
     calc(var(--bio-view-x) * -7px) calc(var(--bio-view-y) * -7px),
     0 0,
     0 0,
     0 0,
     0 0,
     0 0;
-  background-repeat: no-repeat, no-repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
-  background-blend-mode: normal, var(--_pearl-blend), normal, normal, normal, normal, normal, normal;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-blend-mode: normal, var(--_pearl-blend), normal, normal, normal, normal, normal, normal, normal;
+}
+
+/* Edge light. Like the rim of a glass, every surface's edge catches the
+   light around it: brightest where it faces the light above, tinted by the
+   environment at that exact spot. Opaque surfaces get it too. */
+[data-bio-fidelity="full"] [data-bio-reflect]:is([data-bio-material="porcelain"], [data-bio-material="carbon"])::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background:
+    var(--_edge-light),
+    var(--bio-env-light, linear-gradient(transparent, transparent)) calc(var(--bio-rx, 0px) + 1px) calc(var(--bio-ry, 0px) + 1px) / 100vw 100vh no-repeat;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0.55;
+  pointer-events: none;
+}
+/* Glass refracts it: membrane and crystal rims carry the environment too. */
+[data-bio-fidelity="full"] [data-bio-reflect][data-bio-material="membrane"]::before {
+  background:
+    var(--bio-rim),
+    var(--bio-env-light, linear-gradient(transparent, transparent)) calc(var(--bio-rx, 0px) + 1px) calc(var(--bio-ry, 0px) + 1px) / 100vw 100vh no-repeat;
+}
+[data-bio-fidelity="full"] [data-bio-reflect][data-bio-material="crystal"]::before {
+  background:
+    var(--bio-crystal-rim),
+    var(--bio-env-light, linear-gradient(transparent, transparent)) calc(var(--bio-rx, 0px) + 1px) calc(var(--bio-ry, 0px) + 1px) / 100vw 100vh no-repeat;
 }
 
 /* Pearl: a tri-coat white pearl. Calm; colour appears only at an angle. */

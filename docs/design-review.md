@@ -99,6 +99,15 @@ Feedback from a real iPhone: the forms looked bulbous, and the navigation was po
 | Buttons had gradient fills, inner highlights, drop glows and a hover lift. Cards had a clearcoat gloss. The orb was a shaded sphere. | Everything looked inflated. | Buttons are flat solid fills (Carbon primary, a 6% tonal secondary) with no shadow, gloss or lift. Finishes keep the tonal pearl but drop the gloss. The hero and rings cards step down to radius R5 and depth 1. The orb becomes flat concentric discs and is hidden on phones. The rings lose their glow. | Done |
 | The phone dock was a floating glass capsule over content, with a heavy black active blob. | It covered content, looked heavy, and its corners only approximated the screen's. | Phones get an edge-to-edge tab bar with a translucent canvas tint, a hairline top border and safe-area padding. Because it sits flush with the screen edge, the device's own corners shape it. The active state is a soft tonal pill behind the icon plus ink-coloured text. Wide screens get the same quiet column with no container. | Done |
 
+## Pass 10: Tabs that fit; surfaces that respond to their surroundings
+
+| Observed | Pain point | Change | Status |
+|---|---|---|---|
+| On a phone, the Library tab track clipped "Components" mid-word, cutting through the container. | It looked broken and gave no hint that more tabs existed. | `Tabs` scrolls when it overflows, with snap points and a fade only on the edge that has more beyond it. The selected tab centres itself. Under 560 px the track dissolves into separate chips, so a clipped edge never cuts through a container. | Done |
+| Surfaces ignored what was behind them. Only glass blurred its background. | Materials didn't feel like they were in the same space. | **Reflection**: the living background publishes a small snapshot of itself every few seconds (`--bio-env-image`, `--bio-env-light`). Every Surface and Card draws it at viewport scale, offset by its own position, so its body carries the colour of exactly what's behind it. That changes as it scrolls through the environment or as the mood shifts. **Edge light**: opaque surfaces get a 1 px rim that catches the light above and the environment's colour at that spot, like the edge of glass. Membrane and crystal rims carry the environment too, which reads as refraction. A single rAF pass places the reflection for visible surfaces; it is off at Lite fidelity. | Done |
+
+Limit: the reflection is a low-resolution colour map of the environment, refreshed about every 3 seconds. It is not a live mirror, by design, since the background moves slowly. Surfaces reflect the background, not each other.
+
 ## Spec compliance, re-checked after v2
 
 - **Accessibility (§18):** axe runs on every view in tests with no violations. Rings use `role="meter"` with value text. The Island is a polite live region. Gestures keep their button alternatives.

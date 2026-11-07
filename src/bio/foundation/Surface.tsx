@@ -55,6 +55,7 @@ export const Surface = forwardRef<HTMLElement, SurfaceProps>(function Surface(
       ref={ref}
       data-bio-material={material}
       data-bio-finish={finish}
+      data-bio-reflect=""
       data-bio-depth={`D${depth}`}
       className={cx(surfaceClass(material, depth, radius, padding, isLit), className)}
       {...(isLit ? LIT : undefined)}

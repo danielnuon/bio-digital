@@ -120,6 +120,7 @@ export const Card = forwardRef<HTMLElement, CardProps>(function Card(
       aria-labelledby={title ? `${id}-t` : undefined}
       data-bio-material={material}
       data-bio-finish={finish}
+      data-bio-reflect=""
       data-interactive={interactive || undefined}
       data-draggable={draggable || undefined}
       className={cx(surfaceClass(material, depth, radius), styles.card, className)}

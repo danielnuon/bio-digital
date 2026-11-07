@@ -115,3 +115,46 @@ export async function requestTiltPermission(): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Reflection placement. Surfaces reflect the environment behind them: the
+ * environment map is drawn at viewport scale and offset by each surface's
+ * position, so a card shows the colour and light of exactly where it sits,
+ * and that changes as it scrolls through the environment.
+ * One rAF-throttled pass over the visible [data-bio-reflect] elements.
+ */
+export function useReflectionPlacement(root: HTMLElement | null, enabled: boolean) {
+  useEffect(() => {
+    if (!root || !enabled || typeof window === "undefined") return;
+    let frame = 0;
+    const place = () => {
+      frame = 0;
+      const vh = window.innerHeight;
+      root.querySelectorAll<HTMLElement>("[data-bio-reflect]").forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.bottom < -40 || r.top > vh + 40) return;
+        const x = `${-Math.round(r.left)}px`;
+        const y = `${-Math.round(r.top)}px`;
+        if (el.style.getPropertyValue("--bio-rx") !== x) el.style.setProperty("--bio-rx", x);
+        if (el.style.getPropertyValue("--bio-ry") !== y) el.style.setProperty("--bio-ry", y);
+      });
+    };
+    const queue = () => {
+      if (!frame) frame = requestAnimationFrame(place);
+    };
+    window.addEventListener("scroll", queue, { passive: true, capture: true });
+    window.addEventListener("resize", queue);
+    const mo = new MutationObserver(queue);
+    mo.observe(root, { childList: true, subtree: true });
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(queue) : null;
+    ro?.observe(root);
+    queue();
+    return () => {
+      window.removeEventListener("scroll", queue, { capture: true });
+      window.removeEventListener("resize", queue);
+      mo.disconnect();
+      ro?.disconnect();
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [root, enabled]);
+}

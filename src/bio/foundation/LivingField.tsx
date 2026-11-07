@@ -57,6 +57,35 @@ void main(){
 
 type RGBA = [number, number, number, number];
 
+/**
+ * Environment map for surfaces (see tokens/finish.css, "reflection").
+ * --bio-env-image: the field at low strength, for a surface's body.
+ * --bio-env-light: the field brightened, for the light caught at its edges.
+ */
+let snap: HTMLCanvasElement | null = null;
+function publishEnvironment(src: HTMLCanvasElement) {
+  try {
+    snap ??= document.createElement("canvas");
+    snap.width = 48;
+    snap.height = 32;
+    const ctx = snap.getContext("2d");
+    if (!ctx) return;
+    const root = document.documentElement.style;
+    ctx.clearRect(0, 0, 48, 32);
+    ctx.globalAlpha = 0.34;
+    ctx.filter = "saturate(1.4)";
+    ctx.drawImage(src, 0, 0, 48, 32);
+    root.setProperty("--bio-env-image", `url(${snap.toDataURL("image/png")})`);
+    ctx.clearRect(0, 0, 48, 32);
+    ctx.globalAlpha = 1;
+    ctx.filter = "brightness(1.5) saturate(1.6)";
+    ctx.drawImage(src, 0, 0, 48, 32);
+    root.setProperty("--bio-env-light", `url(${snap.toDataURL("image/png")})`);
+  } catch {
+    /* no environment map; surfaces keep their own light */
+  }
+}
+
 const probe = typeof document !== "undefined" ? document.createElement("canvas").getContext("2d") : null;
 function parseColor(value: string, fallback: RGBA): RGBA {
   if (!probe || !value) return fallback;
@@ -182,6 +211,9 @@ export function LivingField({ still = false, onUnsupported, className }: LivingF
       gl.uniform1f(U.sheen, cur.sheen);
       gl.uniform1f(U.top, cur.top);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
+      // Publish what the environment looks like right now, so surfaces can
+      // reflect it. Sampled every ~3 s: the field moves slowly.
+      if (frames % 64 === 1 || still) publishEnvironment(canvas);
       if (!still && !document.hidden) raf = requestAnimationFrame(draw);
     };
     const onVisible = () => {
