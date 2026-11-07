@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, screen, within } from "@testing-librar
 import axe from "axe-core";
 import { App } from "./App";
 
-describe("demo dashboard", () => {
+describe("library showcase", () => {
   afterEach(() => {
     cleanup();
     localStorage.clear();
@@ -11,7 +11,7 @@ describe("demo dashboard", () => {
 
   it("renders the overview with no axe violations", async () => {
     const { container } = render(<App />);
-    expect(screen.getByRole("heading", { level: 1, name: "Habitat" })).toBeTruthy();
+    expect(screen.getByRole("heading", { level: 1, name: "BIO DIGITAL" })).toBeTruthy();
     // Colour contrast needs real layout; it is checked by hand against token values.
     const results = await axe.run(container, { rules: { "color-contrast": { enabled: false } } });
     expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
@@ -33,23 +33,57 @@ describe("demo dashboard", () => {
     expect(root.getAttribute("data-bio-motion")).toBe("reduced");
   });
 
-  it("announces through the island and dims nothing else", async () => {
+  it("controls in the components gallery drive real state", async () => {
+    const { container } = render(<App />);
+    const root = container.querySelector("[data-bio-root]")!;
+    act(() => {
+      fireEvent.click(within(screen.getByRole("navigation", { name: "Primary" })).getByRole("button", { name: /^Components/ }));
+    });
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 400));
+    });
+    act(() => {
+      fireEvent.click(screen.getByRole("button", { name: /^Night/ }));
+    });
+    expect(root.getAttribute("data-bio-environment")).toBe("night");
+  });
+
+  it("announces through the island", () => {
     render(<App />);
     act(() => {
-      fireEvent.click(screen.getByRole("button", { name: /Irrigation/ }));
+      fireEvent.click(screen.getByRole("button", { name: "Send a message to the island" }));
     });
-    expect(screen.getByRole("button", { name: /Irrigation/ }).getAttribute("aria-pressed")).toBe("false");
-    expect(screen.getAllByRole("status").some((el) => /Irrigation off/.test(el.textContent ?? ""))).toBe(true);
+    expect(screen.getAllByRole("status").some((el) => /The Living Island/.test(el.textContent ?? ""))).toBe(true);
   });
 
   it("every view renders without axe violations", async () => {
     const { container } = render(<App />);
-    for (const name of ["Zones", "Physics", "Library"]) {
+    for (const name of ["Foundations", "Materials", "Motion", "Components"]) {
       act(() => {
         fireEvent.click(within(screen.getByRole("navigation", { name: "Primary" })).getByRole("button", { name: new RegExp(`^${name}`) }));
       });
       await act(async () => {
         await new Promise((r) => setTimeout(r, 400));
+      });
+      const results = await axe.run(container, { rules: { "color-contrast": { enabled: false } } });
+      expect(results.violations.map((v) => `${name} ${v.id}: ${v.help} ${v.nodes[0]?.target}`)).toEqual([]);
+    }
+  });
+
+  it("every component family renders without axe violations", async () => {
+    const { container } = render(<App />);
+    act(() => {
+      fireEvent.click(within(screen.getByRole("navigation", { name: "Primary" })).getByRole("button", { name: /^Components/ }));
+    });
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 400));
+    });
+    for (const name of ["Interaction", "Navigation", "Information", "Spatial"]) {
+      act(() => {
+        fireEvent.click(screen.getByRole("tab", { name }));
+      });
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 300));
       });
       const results = await axe.run(container, { rules: { "color-contrast": { enabled: false } } });
       expect(results.violations.map((v) => `${name} ${v.id}: ${v.help} ${v.nodes[0]?.target}`)).toEqual([]);

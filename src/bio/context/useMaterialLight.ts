@@ -36,63 +36,50 @@ export function useMaterialLight(root: HTMLElement | null, enabled: boolean) {
 }
 
 /**
- * Viewing angle (--bio-view-x, --bio-view-y, each −1…1) on the root.
- * Layered finishes read it to shift colour with angle, the way pearl and
- * colour-shift paints "flop" between face and flank. Sources, in order of
- * preference: device tilt (when available), the pointer, and on touch
- * screens scroll position, so the finish still moves as you scroll.
- * The root eases these values (registered properties with a transition),
- * which gives the change mass instead of tracking the input rigidly.
+ * Viewing angle (--bio-view-x, --bio-view-y, each −1…1) on the root, from
+ * device tilt. Layered finishes read it to shift colour with angle, the way
+ * pearl paint "flops" between face and flank.
+ *
+ * Opt-in (not called by BioProvider). Every write restyles every finished
+ * surface, so the hook eases in script toward the tilt target, writes only
+ * visible changes, and stops its loop once the angle has settled. Pointer
+ * and scroll are deliberately not sources: they change on nearly every
+ * frame and made the whole page repaint while scrolling.
  */
 export function useViewAngle(root: HTMLElement | null, enabled: boolean) {
   useEffect(() => {
     if (!root || typeof window === "undefined") return;
-    if (!enabled) {
-      root.style.setProperty("--bio-view-x", "0");
-      root.style.setProperty("--bio-view-y", "0");
-      return;
-    }
-    let frame = 0;
-    let x = 0;
-    let y = 0;
-    let tilt = false;
-    const write = () => {
-      frame = 0;
+    const set = (x: number, y: number) => {
       root.style.setProperty("--bio-view-x", x.toFixed(3));
       root.style.setProperty("--bio-view-y", y.toFixed(3));
     };
-    const queue = () => {
-      if (!frame) frame = requestAnimationFrame(write);
-    };
+    if (!enabled) {
+      set(0, 0);
+      return;
+    }
+    let frame = 0;
+    const cur = { x: 0, y: 0 };
+    const target = { x: 0, y: 0 };
     const clamp = (v: number) => Math.max(-1, Math.min(1, v));
-    const onMove = (e: PointerEvent) => {
-      if (tilt || e.pointerType === "touch") return;
-      x = clamp((e.clientX / window.innerWidth) * 2 - 1);
-      y = clamp((e.clientY / window.innerHeight) * 2 - 1);
-      queue();
-    };
-    const onScroll = () => {
-      if (tilt) return;
-      const coarse = window.matchMedia?.("(hover: none)").matches;
-      if (!coarse) return;
-      x = Math.sin(window.scrollY / 420) * 0.8;
-      y = Math.cos(window.scrollY / 640) * 0.5;
-      queue();
+    const step = () => {
+      frame = 0;
+      const dx = target.x - cur.x;
+      const dy = target.y - cur.y;
+      if (Math.abs(dx) < 0.004 && Math.abs(dy) < 0.004) return;
+      cur.x += dx * 0.12;
+      cur.y += dy * 0.12;
+      set(cur.x, cur.y);
+      frame = requestAnimationFrame(step);
     };
     const onTilt = (e: DeviceOrientationEvent) => {
       if (e.gamma == null || e.beta == null) return;
-      tilt = true;
-      x = clamp(e.gamma / 30);
-      y = clamp((e.beta - 45) / 30);
-      queue();
+      // quantise so sensor noise doesn't keep the loop awake
+      target.x = Math.round(clamp(e.gamma / 30) * 50) / 50;
+      target.y = Math.round(clamp((e.beta - 45) / 30) * 50) / 50;
+      if (!frame) frame = requestAnimationFrame(step);
     };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("deviceorientation", onTilt);
-    onScroll();
     return () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("deviceorientation", onTilt);
       if (frame) cancelAnimationFrame(frame);
     };
@@ -117,11 +104,16 @@ export async function requestTiltPermission(): Promise<boolean> {
 }
 
 /**
- * Reflection placement. Surfaces reflect the environment behind them: the
- * environment map is drawn at viewport scale and offset by each surface's
- * position, so a card shows the colour and light of exactly where it sits,
- * and that changes as it scrolls through the environment.
- * One rAF-throttled pass over the visible [data-bio-reflect] elements.
+ * Reflection placement. Surfaces reflect the environment: the environment
+ * map is drawn at viewport scale and offset by each surface's place in the
+ * page, so neighbouring cards show neighbouring parts of the field.
+ *
+ * The offset is computed in page space and only when layout changes
+ * (resize, content added or removed), never on scroll. Writing per-element
+ * offsets on every scroll frame repainted every card while scrolling, which
+ * is what made scrolling stutter. The trade: a reflection does not slide as
+ * its surface scrolls. The field is low-frequency, so this reads as a
+ * stable tint rather than a frozen picture.
  */
 export function useReflectionPlacement(root: HTMLElement | null, enabled: boolean) {
   useEffect(() => {
@@ -129,20 +121,28 @@ export function useReflectionPlacement(root: HTMLElement | null, enabled: boolea
     let frame = 0;
     const place = () => {
       frame = 0;
-      const vh = window.innerHeight;
+      const vh = window.innerHeight || 1;
+      const sy = window.scrollY;
       root.querySelectorAll<HTMLElement>("[data-bio-reflect]").forEach((el) => {
         const r = el.getBoundingClientRect();
-        if (r.bottom < -40 || r.top > vh + 40) return;
+        // page-space top, folded into the map's height; keep the surface
+        // inside the map when it fits so its lower edge isn't left bare
+        const top = (((r.top + sy) % vh) + vh) % vh;
+        const fit = Math.min(top, Math.max(0, vh - r.height));
         const x = `${-Math.round(r.left)}px`;
-        const y = `${-Math.round(r.top)}px`;
+        const y = `${-Math.round(fit)}px`;
         if (el.style.getPropertyValue("--bio-rx") !== x) el.style.setProperty("--bio-rx", x);
         if (el.style.getPropertyValue("--bio-ry") !== y) el.style.setProperty("--bio-ry", y);
       });
     };
+    let timer = 0;
+    // Batch bursts of layout change (a view switch mounts many surfaces).
     const queue = () => {
-      if (!frame) frame = requestAnimationFrame(place);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        if (!frame) frame = requestAnimationFrame(place);
+      }, 60);
     };
-    window.addEventListener("scroll", queue, { passive: true, capture: true });
     window.addEventListener("resize", queue);
     const mo = new MutationObserver(queue);
     mo.observe(root, { childList: true, subtree: true });
@@ -150,8 +150,8 @@ export function useReflectionPlacement(root: HTMLElement | null, enabled: boolea
     ro?.observe(root);
     queue();
     return () => {
-      window.removeEventListener("scroll", queue, { capture: true });
       window.removeEventListener("resize", queue);
+      window.clearTimeout(timer);
       mo.disconnect();
       ro?.disconnect();
       if (frame) cancelAnimationFrame(frame);

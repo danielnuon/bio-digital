@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
  * current tokens (--bio-canvas and the three --bio-mood-* lights), so a
  * change of environment or mood flows through the field instead of
  * snapping. Cost is kept flat: the field renders at a fraction of screen
- * resolution (it is all low frequency), caps at about 22 fps (the motion is slow), and stops when the
+ * resolution (it is all low frequency), caps at 30 fps (the motion is slow), and stops when the
  * tab is hidden. Under reduced motion it draws a single still frame.
  */
 export interface LivingFieldProps {
@@ -153,6 +153,9 @@ export function LivingField({ still = false, onUnsupported, className }: LivingF
     const cur = { base: [0.97, 0.97, 0.96, 1] as RGBA, a: [0, 0, 0, 0] as RGBA, b: [0, 0, 0, 0] as RGBA, c: [0, 0, 0, 0] as RGBA, sheen: 0, top: 0 };
     let target = { ...cur };
     let first = true;
+    // Frame at which to publish the environment map next (see below).
+    let publishAt = 2;
+    let sig = "";
     const read = () => {
       const cs = getComputedStyle(host);
       const night = !!host.closest('[data-bio-environment="night"]');
@@ -167,6 +170,12 @@ export function LivingField({ still = false, onUnsupported, className }: LivingF
       if (first) {
         Object.assign(cur, target);
         first = false;
+      }
+      // Tokens changed: publish once the colours have eased (~1.5 s).
+      const next = JSON.stringify([target.base, target.a, target.b, target.c, target.top]);
+      if (next !== sig) {
+        if (sig) publishAt = frames + 48;
+        sig = next;
       }
     };
     const ease = (from: RGBA, to: RGBA, k: number) => from.map((v, i) => v + (to[i] - v) * k) as RGBA;
@@ -185,7 +194,7 @@ export function LivingField({ still = false, onUnsupported, className }: LivingF
     const t0 = performance.now();
     const draw = (now: number) => {
       raf = 0;
-      if (!still && now - last < 45) {
+      if (!still && now - last < 32) {
         raf = requestAnimationFrame(draw);
         return;
       }
@@ -211,9 +220,11 @@ export function LivingField({ still = false, onUnsupported, className }: LivingF
       gl.uniform1f(U.sheen, cur.sheen);
       gl.uniform1f(U.top, cur.top);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
-      // Publish what the environment looks like right now, so surfaces can
-      // reflect it. Sampled every ~3 s: the field moves slowly.
-      if (frames % 64 === 1 || still) publishEnvironment(canvas);
+      // Publish what the environment looks like, so surfaces can reflect it.
+      // Only at start and after a change of environment or mood: each
+      // publish swaps an image on every surface, which costs a repaint of
+      // all of them, so a periodic refresh showed up as a regular hitch.
+      if (frames === publishAt || still) publishEnvironment(canvas);
       if (!still && !document.hidden) raf = requestAnimationFrame(draw);
     };
     const onVisible = () => {

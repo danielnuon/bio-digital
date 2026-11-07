@@ -106,7 +106,23 @@ Feedback from a real iPhone: the forms looked bulbous, and the navigation was po
 | On a phone, the Library tab track clipped "Components" mid-word, cutting through the container. | It looked broken and gave no hint that more tabs existed. | `Tabs` scrolls when it overflows, with snap points and a fade only on the edge that has more beyond it. The selected tab centres itself. Under 560 px the track dissolves into separate chips, so a clipped edge never cuts through a container. | Done |
 | Surfaces ignored what was behind them. Only glass blurred its background. | Materials didn't feel like they were in the same space. | **Reflection**: the living background publishes a small snapshot of itself every few seconds (`--bio-env-image`, `--bio-env-light`). Every Surface and Card draws it at viewport scale, offset by its own position, so its body carries the colour of exactly what's behind it. That changes as it scrolls through the environment or as the mood shifts. **Edge light**: opaque surfaces get a 1 px rim that catches the light above and the environment's colour at that spot, like the edge of glass. Membrane and crystal rims carry the environment too, which reads as refraction. A single rAF pass places the reflection for visible surfaces; it is off at Lite fidelity. | Done |
 
-Limit: the reflection is a low-resolution colour map of the environment, refreshed about every 3 seconds. It is not a live mirror, by design, since the background moves slowly. Surfaces reflect the background, not each other.
+Limit: the reflection is a low-resolution colour map of the environment, refreshed about every 3 seconds (changed in pass 11). It is not a live mirror, by design, since the background moves slowly. Surfaces reflect the background, not each other.
+
+## Pass 11: A library showcase, and smooth motion
+
+Feedback: no mock data; the demo should focus on the component library and its functionality. Motion felt jumpy and jittery everywhere.
+
+| Observed | Cause | Change | Status |
+|---|---|---|---|
+| The Habitat dashboard, zones, live readings and alerts were invented data. | The demo was a product mock-up, not a library showcase. | Removed. The app is now Overview, Foundations, Materials, Motion and Components. Components is organised by the five families, and every data component shows real values: spring constants, damping ratios and settle times computed from `physics.ts`. Control tiles, menus and sliders change the page's real environment, density, motion, fidelity and corner radius. | Done |
+| The whole app re-rendered every 4 s. | Live readings ticked at the root. | Gone with the mock data. | Done |
+| Scrolling stuttered. | Three things wrote styles on every scroll frame: reflection offsets on every card, the view angle on the root (on touch screens), and a scroll-linked header that scaled the title under a blurred sticky bar. | Reflection offsets are computed in page space and only when layout changes, never on scroll. The view angle no longer follows scroll or pointer. The header is static. | Done |
+| Moving the mouse repainted every card. | The view angle followed the pointer and transitioned over 0.9 s as an inherited property on the root, which restyled every finished surface on every frame. | The root transition is removed. `useViewAngle` is opt-in (device tilt from Preferences), eases in script, quantises sensor noise and stops once settled. | Done |
+| A hitch about every 3 s. | The background republished its environment map, swapping an image on every surface. | Published once at start and once after each environment or mood change. | Done |
+| View changes lurched. | Views animated scale and translate with a spring while the page smooth-scrolled to the top. | Opacity-only crossfade (0.16 s) and an instant scroll reset. The island's content swap no longer animates a blur filter. | Done |
+| Phone: a 4-option segmented control overflowed its card; a chart's hidden data table widened the page by 7 px. | Segments couldn't shrink; tables can't shrink below their content. | Segments share the available width. The table is hidden by a wrapper. | Done |
+
+Measured in headless Chromium with software rendering, wheel-scrolling the Information family: median frame 16.7 ms (60 fps), 95th percentile 33 ms. Before this pass the page ran at about 19 to 30 fps in the same setup. That is not a measurement on an iPhone. Trade-off: a surface's reflection no longer slides as it scrolls.
 
 ## Spec compliance, re-checked after v2
 
@@ -119,5 +135,4 @@ Limit: the reflection is a low-resolution colour map of the environment, refresh
 ## Open items
 
 - Corner radii for the newest iPhones need confirming against a real device. Ideally a native wrapper would pass the exact value.
-- The bento layout is tuned for the Habitat demo. A generic `Bento` layout primitive would make it reusable.
 - Haptics (the spec's tactile layer) can't be done on iOS Safari. The Vibration API only exists on Android.

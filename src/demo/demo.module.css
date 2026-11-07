@@ -37,24 +37,11 @@
 
 /* ── large title header ─────────────────────────────────────── */
 .header {
-  position: sticky;
-  /* the island's band scrolls away; the title row stays as a compact bar */
-  top: calc(-1 * (env(safe-area-inset-top, 0px) + 56px));
-  z-index: 30;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 68px); /* room for the island */
+  /* Static: no sticky glass bar, nothing recomputed while scrolling. */
+  position: relative;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 56px);
   padding-bottom: var(--bio-space-3);
   margin-bottom: var(--bio-space-4);
-}
-.headerBar {
-  position: absolute;
-  inset: 0 -24px;
-  background: var(--bio-membrane-bg);
-  -webkit-backdrop-filter: var(--bio-membrane-filter);
-  backdrop-filter: var(--bio-membrane-filter);
-  border-bottom: 1px solid var(--bio-membrane-border);
-  -webkit-mask: linear-gradient(#000 70%, transparent);
-  mask: linear-gradient(#000 70%, transparent);
-  pointer-events: none;
 }
 .headerInner {
   position: relative;
@@ -721,4 +708,67 @@
   .heroOrb {
     display: none;
   }
+}
+
+/* ── overview ───────────────────────────────────────────────── */
+.specimen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bio-space-4);
+  width: min(340px, 100%);
+}
+.specimenHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--bio-type-caption);
+  color: var(--bio-text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+@media (max-width: 860px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .specimen {
+    width: 100%;
+  }
+}
+.families {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--bio-density-gap);
+}
+.familyNames {
+  margin: var(--bio-space-2) 0 0;
+  font-size: var(--bio-type-supporting);
+  color: var(--bio-text-muted);
+  line-height: var(--bio-leading-snug);
+}
+.codeBlock {
+  margin: 0;
+  padding: var(--bio-space-4);
+  overflow-x: auto;
+  border-radius: var(--bio-radius-r3);
+  background: color-mix(in srgb, var(--bio-text) 5%, transparent);
+  font-family: var(--bio-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: var(--bio-type-supporting);
+  line-height: 1.6;
+  white-space: pre;
+}
+.specGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--bio-density-gap);
+  align-items: start;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bio-space-2);
+}
+.h3 {
+  margin: 0;
+  font-size: var(--bio-type-title);
+  font-weight: var(--bio-weight-semibold);
 }

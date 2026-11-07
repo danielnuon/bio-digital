@@ -30,3 +30,6 @@ export const IconRefresh = base(<><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3" /><pa
 export const IconSearch = base(<><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>);
 export const IconPause = base(<><path d="M9 6v12M15 6v12" /></>);
 export const IconSpark = base(<><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6" /></>);
+export const IconHome = base(<><path d="M4 11.5 12 5l8 6.5" /><path d="M6.5 10v8.5h11V10" /></>);
+export const IconSwatch = base(<><circle cx="8" cy="9" r="4" /><circle cx="16" cy="9" r="4" /><circle cx="12" cy="15.5" r="4" /></>);
+export const IconLayers = base(<><path d="M12 4 3.5 8.5 12 13l8.5-4.5L12 4Z" /><path d="m3.5 12.5 8.5 4.5 8.5-4.5" /><path d="m3.5 16.5 8.5 4.5 8.5-4.5" /></>);

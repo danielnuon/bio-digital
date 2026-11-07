@@ -2,11 +2,11 @@
 
 *Technology, naturally alive.*
 
-A React component library implementing the BIO DIGITAL design language (v1.0, November 2026), plus a demo dashboard, **Habitat console**, that shows the system's principles working together.
+A React component library implementing the BIO DIGITAL design language (v1.0, November 2026), plus a showcase app that demonstrates every component working, wired to real state rather than mock data.
 
 ```bash
 npm install
-npm run dev        # demo dashboard at http://localhost:5173
+npm run dev        # showcase at http://localhost:5173
 npm test           # physics unit tests + axe accessibility checks on every view
 npm run build      # typecheck + production build of the demo
 npm run build:lib  # library bundle (dist-lib/) with type declarations
@@ -29,7 +29,7 @@ src/bio/                 the library
   navigation/            Tabs, NavRail, Breadcrumbs, Menu
   information/           Card, List, Metric, Chart, Sparkline, StatusIndicator, DataPanel, Gauge
   spatial/               Modal, Drawer, Popover, FloatingPanel, Toast
-src/demo/                Habitat console: Overview, Zones, Physics lab, Library
+src/demo/                showcase: Overview, Foundations, Materials, Motion, Components (by family)
 ```
 
 ## Usage
@@ -56,7 +56,7 @@ import "bio-digital/styles.css";
 | §8 Depth | `depth={0–4}` maps to D0–D4 shadow tokens from one consistent light source. Open modals and drawers make the page behind recede (`Recede`). |
 | §11 Physics | Spring constants per material, with damping ratios from 0.62 (membrane) to 1.0 (carbon). `simulateSpring` integrates F = −kx − cv for the Physics lab. `shouldDismiss` projects release velocity so a flick dismisses with less travel (§12.7). |
 | §13 Propagation | Card expansion and dismissal use Motion layout, so neighbours inside the same `LayoutGroup` move into place. Unrelated content stays still. |
-| §14 Vitality | Slow ambient forms (24 s cycle, transforms only), a breathing active status, and live readings every 4 s that pause while the tab is hidden. |
+| §14 Vitality | A slow living background field (WebGL, 30 fps cap, paused while the tab is hidden) that eases toward each environment and mood, and a breathing active status. |
 | §15 Density | `data-bio-density` changes spacing and row height; `Metric`, `List` and `DataPanel` reveal more at Engaged and Immersed. `DataPanel` always has an explicit "Show more" control. |
 | §17 Environments | Day and night re-define every semantic token separately; night never uses pure black. `carbon` surfaces re-scope tokens to night for legibility. |
 | §18 Accessibility | Native inputs underneath every custom control, visible focus rings, 44 px targets (hit areas extended on compact controls), roving focus for tabs and menus, focus trap and restore for modals/drawers, keyboard alternatives for every gesture, and a hidden data table plus arrow-key exploration for charts. |

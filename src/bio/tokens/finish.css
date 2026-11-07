@@ -16,8 +16,9 @@
  *                   carbon, or a fill)
  *
  * The viewing angle is --bio-view-x / --bio-view-y (−1…1), written by
- * useViewAngle from device tilt, the pointer, or scroll. Finishes apply only
- * at full fidelity; reduced motion holds the angle at 0 (a still finish).
+ * useViewAngle, which is opt-in and follows device tilt only. Without it
+ * the angle is 0 and finishes are still. Finishes apply only at full
+ * fidelity.
  *
  * Restraint is part of the system: no flake by default, low pearl
  * strength, and only neighbouring hues, so finishes read as depth and
@@ -41,12 +42,9 @@
   inherits: true;
   initial-value: 0;
 }
-/* The angle eases with mass instead of tracking input rigidly (§10). */
-[data-bio-root] {
-  transition:
-    --bio-view-x 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    --bio-view-y 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
+/* No transition on the root: a transitioning inherited property restyles
+   and repaints every finished surface on every frame. useViewAngle eases in
+   script and goes quiet once the angle settles. */
 
 [data-bio-environment="day"] {
   --bio-flake: linear-gradient(transparent, transparent);
@@ -80,8 +78,9 @@
     rgb(167 207 186 / var(--_pearl-a))
   );
   --_candy: linear-gradient(transparent, transparent);
-  /* reflection: the environment behind the surface, at viewport scale and
-     offset by the surface's own position (useReflectionPlacement) */
+  /* reflection: the environment at viewport scale, offset by the surface's
+     place in the page (useReflectionPlacement). The offset is fixed per
+     layout, so scrolling never repaints it. */
   --_reflect: var(--bio-env-image, linear-gradient(transparent, transparent));
   background-image: var(--_clear), var(--_pearl), var(--_reflect), var(--bio-flake), var(--_candy), var(--_base, var(--bio-porcelain-bg));
   background-size: 100% 100%, 320% 320%, 100vw 100vh, 140px 140px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;

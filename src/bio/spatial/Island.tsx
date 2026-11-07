@@ -25,8 +25,9 @@ export function useIsland() {
 
 export interface IslandProviderProps {
   children: ReactNode;
-  /** What the island shows at rest: a short live summary. */
-  idle: ReactNode;
+  /** What the island shows at rest: a short live summary. Without it the
+   *  island stays out of sight until there is something to say. */
+  idle?: ReactNode;
 }
 
 /**
@@ -52,7 +53,7 @@ export function IslandProvider({ children, idle }: IslandProviderProps) {
   );
 }
 
-function Island({ idle, message, onDismiss }: { idle: ReactNode; message?: IslandMessage & { id: number }; onDismiss: () => void }) {
+function Island({ idle, message, onDismiss }: { idle?: ReactNode; message?: IslandMessage & { id: number }; onDismiss: () => void }) {
   const m = useBioMotion("membrane");
   const [paused, setPaused] = useState(false);
   useEffect(() => {
@@ -68,13 +69,21 @@ function Island({ idle, message, onDismiss }: { idle: ReactNode; message?: Islan
     if (shouldDismiss(-info.offset.y, -info.velocity.y, 30)) onDismiss();
   };
 
+  const hidden = !message && !idle;
   return (
     <div className={styles.dock}>
+      {/* Only messages are announced; the idle summary stays quiet. */}
+      <span role="status" className="bio-visually-hidden">
+        {message ? `${message.title}. ${message.description ?? ""}` : ""}
+      </span>
       <motion.div
         layout
+        aria-hidden={hidden || undefined}
+        initial={false}
+        animate={{ opacity: hidden ? 0 : 1, scale: hidden ? 0.6 : 1 }}
         className={cx(styles.island, message ? styles.expanded : styles.compact)}
-        style={{ borderRadius: message ? 28 : 999 }}
-        transition={{ layout: layoutT }}
+        style={{ borderRadius: message ? 28 : 999, pointerEvents: hidden ? "none" : undefined }}
+        transition={{ layout: layoutT, default: m.reduced ? { duration: 0.12 } : { type: "spring", stiffness: 340, damping: 30 } }}
         drag={message && !m.reduced ? "y" : false}
         dragConstraints={{ top: 0, bottom: 0 }}
         dragElastic={{ top: 0.5, bottom: 0.08 }}
@@ -85,19 +94,15 @@ function Island({ idle, message, onDismiss }: { idle: ReactNode; message?: Islan
         onFocus={() => setPaused(true)}
         onBlur={() => setPaused(false)}
       >
-        {/* Only messages are announced; the live idle summary stays quiet. */}
-        <span role="status" className="bio-visually-hidden">
-          {message ? `${message.title}. ${message.description ?? ""}` : ""}
-        </span>
         <div className={styles.content}>
           <AnimatePresence mode="popLayout" initial={false}>
             {message ? (
               <motion.div
                 key={message.id}
                 className={styles.content}
-                initial={{ opacity: 0, filter: m.reduced ? "none" : "blur(6px)", scale: m.reduced ? 1 : 0.9 }}
-                animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-                exit={{ opacity: 0, filter: m.reduced ? "none" : "blur(6px)", scale: m.reduced ? 1 : 0.92 }}
+                initial={{ opacity: 0, scale: m.reduced ? 1 : 0.94 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: m.reduced ? 1 : 0.96 }}
                 transition={{ duration: m.reduced ? 0.12 : 0.28 }}
               >
                 <span className={styles.lead}>
@@ -108,7 +113,7 @@ function Island({ idle, message, onDismiss }: { idle: ReactNode; message?: Islan
                   {message.description && <span className={styles.body}>{message.description}</span>}
                 </span>
               </motion.div>
-            ) : (
+            ) : idle ? (
               <motion.div
                 key="idle"
                 className={styles.content}
@@ -119,7 +124,7 @@ function Island({ idle, message, onDismiss }: { idle: ReactNode; message?: Islan
               >
                 {idle}
               </motion.div>
-            )}
+            ) : null}
           </AnimatePresence>
         </div>
         {message && (

@@ -223,7 +223,9 @@ export function Chart({ title, summary, labels, series, height = 220, format = (
           ))}
         </ul>
       )}
-      <table className="bio-visually-hidden">
+      {/* A table can't shrink below its content, so a wrapper hides it. */}
+      <div className="bio-visually-hidden">
+        <table>
         <caption>{title}</caption>
         <thead>
           <tr>
@@ -246,6 +248,7 @@ export function Chart({ title, summary, labels, series, height = 220, format = (
           ))}
         </tbody>
       </table>
+      </div>
     </figure>
   );
 }

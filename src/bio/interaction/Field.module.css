@@ -160,6 +160,8 @@
   border-radius: var(--bio-radius-pill);
   background: color-mix(in srgb, var(--bio-color-stone) 55%, transparent);
   min-width: 0;
+  /* never wider than its container: segments share the space instead */
+  max-width: 100%;
 }
 [data-bio-environment="night"] .segmented {
   background: rgb(0 0 0 / 0.22);
@@ -170,6 +172,8 @@
 .segment {
   position: relative;
   display: inline-flex;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .segmentInput {
   position: absolute;
@@ -192,6 +196,11 @@
   color: var(--bio-text-muted);
   border-radius: var(--bio-radius-pill);
   white-space: nowrap;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: color var(--bio-duration-state) var(--bio-ease-settle);
 }
 .segmentLabel svg {
@@ -223,4 +232,10 @@
   min-height: 32px;
   padding: 0 var(--bio-space-3);
   font-size: var(--bio-type-caption);
+}
+
+@media (max-width: 480px) {
+  .segmentLabel {
+    padding: 0 var(--bio-space-3);
+  }
 }

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { SegmentedControl, Slider, Toggle, Button, useBio, requestTiltPermission, type Density, type EnvironmentPreference, type MotionPreference } from "../bio";
 import { IconAuto, IconMoon, IconSun } from "./icons";
 import s from "./demo.module.css";
@@ -55,9 +54,11 @@ export function MotionSwitch({ compact }: { compact?: boolean }) {
 }
 
 /** Full preference set, used inside the Preferences drawer. */
-export function PreferencesPanel() {
+export type TiltState = "idle" | "on" | "denied";
+
+export function PreferencesPanel({ tilt, onTilt }: { tilt: TiltState; onTilt: (t: TiltState) => void }) {
   const { fidelity, setFidelity, environment, motion, deviceCorners, setDeviceRadius } = useBio();
-  const [tilt, setTilt] = useState<"idle" | "on" | "denied">("idle");
+  const setTilt = onTilt;
   return (
     <div className={s.prefs}>
       <section className={s.prefGroup} aria-labelledby="pref-env">
@@ -90,8 +91,8 @@ export function PreferencesPanel() {
       <section className={s.prefGroup} aria-labelledby="pref-finish">
         <h3 id="pref-finish" className={s.prefTitle}>Finish and light</h3>
         <p className={s.prefHint}>
-          Pearl and colour-shift finishes change hue with your viewing angle. On a phone they follow scrolling, or the tilt of the device once
-          you allow it.
+          Pearl and colour-shift finishes can change hue with the angle you hold your phone at. Off by default: it follows device tilt only,
+          and needs your permission.
         </p>
         <Button
           variant="secondary"
@@ -101,7 +102,7 @@ export function PreferencesPanel() {
         >
           {tilt === "on" ? "Tilt is on" : "Use device tilt"}
         </Button>
-        {tilt === "denied" && <p className={s.prefHint}>Tilt isn't available here, so finishes follow scrolling instead.</p>}
+        {tilt === "denied" && <p className={s.prefHint}>Tilt isn't available on this device, so finishes stay still.</p>}
       </section>
       <section className={s.prefGroup} aria-labelledby="pref-fidelity">
         <h3 id="pref-fidelity" className={s.prefTitle}>Visual fidelity</h3>
