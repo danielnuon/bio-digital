@@ -65,7 +65,6 @@ export function Rings({ rings, label, size = 168, centerValue, centerLabel, show
                   r={radius}
                   stroke={`url(#${id}-${r.id})`}
                   strokeWidth={stroke}
-                  filter={`url(#${id}-glow)`}
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: Math.max(0.001, Math.min(1, r.value)) }}
                   transition={m.reduced ? { duration: 0 } : { type: "spring", stiffness: 60, damping: 16, mass: 1, delay: i * 0.08 }}

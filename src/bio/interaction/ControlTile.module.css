@@ -65,9 +65,8 @@
     color var(--bio-duration-state) var(--bio-ease-settle);
 }
 .tile[aria-pressed="true"] .icon {
-  background: var(--bio-color-carbon);
-  color: var(--bio-color-cloud);
-  box-shadow: 0 6px 14px -6px rgb(37 45 43 / 0.5);
+  background: rgb(255 255 255 / 0.55);
+  color: var(--bio-color-carbon);
 }
 .icon svg {
   width: 20px;

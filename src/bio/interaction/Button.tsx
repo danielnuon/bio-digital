@@ -74,9 +74,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       data-variant={variant}
       data-size={size}
       data-state={state}
-      data-bio-finish={variant === "primary" ? "candy" : undefined}
-      className={cx(styles.button, styles[variant], styles[size], iconOnly && styles.iconOnly, variant === "primary" && "bio-lumen", className)}
-      whileHover={inactive ? undefined : { y: -m.hoverLift }}
+      className={cx(styles.button, styles[variant], styles[size], iconOnly && styles.iconOnly, className)}
       whileTap={inactive ? undefined : { scale: m.pressScale }}
       transition={m.transition}
       onClick={handleClick}

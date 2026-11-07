@@ -58,7 +58,7 @@ export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
   return (
     <div className={s.grid}>
       {/* Hero: the habitat's pulse. Its light follows the environment's mood. */}
-      <Surface as="section" aria-labelledby="hero-t" material="porcelain" finish="pearl" depth={2} radius="r6" className={`${s.hero} ${s.span8}`} lit>
+      <Surface as="section" aria-labelledby="hero-t" material="porcelain" finish="pearl" depth={1} radius="r5" className={`${s.hero} ${s.span8}`} lit>
         <div className={s.heroText}>
           <StatusIndicator
             status={attention ? "warning" : "success"}
@@ -88,7 +88,7 @@ export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
         </div>
       </Surface>
 
-      <Card className={`${s.span4} ${s.ringsCard}`} material="crystal" finish="pearl" depth={2} radius="r6" eyebrow="Today" title="Living balance" headingLevel={2}>
+      <Card className={`${s.span4} ${s.ringsCard}`} material="crystal" finish="pearl" depth={1} radius="r5" eyebrow="Today" title="Living balance" headingLevel={2}>
         <Rings
           label="Living balance"
           centerValue={`${selfSupplied}%`}

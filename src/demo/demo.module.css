@@ -135,14 +135,14 @@
 @media (max-width: 760px) {
   .shell {
     --bio-edge-gap: max(10px, calc(env(safe-area-inset-bottom, 0px) - 18px));
-    padding: 0 max(16px, env(safe-area-inset-right, 0px)) calc(110px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    padding: 0 max(16px, env(safe-area-inset-right, 0px)) calc(88px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
   }
   .dockWrap {
     top: auto;
     translate: none;
-    left: var(--bio-edge-gap);
-    right: var(--bio-edge-gap);
-    bottom: var(--bio-edge-gap);
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
   /* On phones the header scrolls away; the island and dock keep context. */
   .header {
@@ -714,4 +714,11 @@
 }
 .prefGroup > div:last-child {
   width: 100%;
+}
+
+/* The orb is ambient decoration; on phones it only crowds the hero. */
+@media (max-width: 760px) {
+  .heroOrb {
+    display: none;
+  }
 }

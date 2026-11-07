@@ -90,6 +90,15 @@ Feedback on v4: too much going on. Danny chose **calm and serene** (spec §3.5 S
 
 The finish system and the viewing-angle signal remain in the library, but their defaults are now quiet. Pearl strength is 0.10–0.16, there is no flake, and gloss is soft.
 
+## Pass 9: Flat forms and a real tab bar
+
+Feedback from a real iPhone: the forms looked bulbous, and the navigation was poor.
+
+| Observed | Pain point | Change | Status |
+|---|---|---|---|
+| Buttons had gradient fills, inner highlights, drop glows and a hover lift. Cards had a clearcoat gloss. The orb was a shaded sphere. | Everything looked inflated. | Buttons are flat solid fills (Carbon primary, a 6% tonal secondary) with no shadow, gloss or lift. Finishes keep the tonal pearl but drop the gloss. The hero and rings cards step down to radius R5 and depth 1. The orb becomes flat concentric discs and is hidden on phones. The rings lose their glow. | Done |
+| The phone dock was a floating glass capsule over content, with a heavy black active blob. | It covered content, looked heavy, and its corners only approximated the screen's. | Phones get an edge-to-edge tab bar with a translucent canvas tint, a hairline top border and safe-area padding. Because it sits flush with the screen edge, the device's own corners shape it. The active state is a soft tonal pill behind the icon plus ink-coloured text. Wide screens get the same quiet column with no container. | Done |
+
 ## Spec compliance, re-checked after v2
 
 - **Accessibility (§18):** axe runs on every view in tests with no violations. Rings use `role="meter"` with value text. The Island is a polite live region. Gestures keep their button alternatives.

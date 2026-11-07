@@ -283,84 +283,92 @@
   background: var(--bio-divider);
 }
 
-/* ── dock variant: a floating glass capsule ─────────────────────── */
+/* ── dock variant ───────────────────────────────────────────────
+   Wide screens: a quiet column of destinations, no container.
+   Phones: an edge-to-edge tab bar. Flush with the screen edge, its
+   corners are the device's own, so it always matches the hardware. */
 .dock {
-  padding: 8px;
-  /* concentric with the screen corner when docked against it */
-  border-radius: max(var(--bio-radius-r5), calc(var(--bio-device-radius) - var(--bio-edge-gap)));
-  --bio-outer-radius: max(var(--bio-radius-r5), calc(var(--bio-device-radius) - var(--bio-edge-gap)));
-  --bio-outer-pad: 8px;
-  --_base: var(--bio-membrane-bg);
-  background: var(--bio-membrane-bg);
-  border: 1px solid var(--bio-membrane-border);
-  box-shadow: var(--bio-depth-3), var(--bio-membrane-highlight);
-  -webkit-backdrop-filter: var(--bio-membrane-filter);
-  backdrop-filter: var(--bio-membrane-filter);
-}
-[data-bio-fidelity="lite"] .dock {
-  background: var(--bio-membrane-bg-opaque);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  padding: 0;
+  background: transparent;
 }
 .dock .railList {
-  gap: 4px;
+  gap: var(--bio-space-2);
 }
 .dock .railItem {
   flex-direction: column;
   justify-content: center;
   gap: 4px;
   width: 72px;
-  min-height: 64px;
-  padding: 8px 4px;
-  /* inner = outer − padding, so items nest concentrically in the dock */
-  border-radius: max(var(--bio-radius-r3), calc(var(--bio-outer-radius) - var(--bio-outer-pad)));
+  min-height: 60px;
+  padding: 6px 4px;
+  border-radius: var(--bio-radius-r3);
   font-size: 11px;
-  font-weight: var(--bio-weight-semibold);
+  font-weight: var(--bio-weight-medium);
   letter-spacing: 0.01em;
   text-align: center;
 }
 .dock .railLabel {
   flex: none;
 }
-.dock .railIcon svg {
-  width: 24px;
-  height: 24px;
+.dock .railIcon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 30px;
 }
+.dock .railIcon svg {
+  width: 22px;
+  height: 22px;
+}
+/* active: a soft tonal pill behind the icon only */
 .dock .railActive {
-  --bio-lumen-width: 1.5px;
-  --_base: var(--bio-primary-fill);
-  background: var(--bio-primary-fill);
-  box-shadow: var(--bio-primary-glow), inset 0 1px 0 rgb(255 255 255 / 0.18);
+  inset: 6px auto auto 50%;
+  width: 52px;
+  height: 30px;
+  translate: -50% 0;
+  border-radius: var(--bio-radius-pill);
+  background: var(--bio-accent-soft);
+  box-shadow: none;
 }
 .dock .railActive::before {
   display: none;
 }
 .dock .railItem[aria-current="page"] {
-  color: var(--bio-on-primary);
+  color: var(--bio-accent-ink);
+  font-weight: var(--bio-weight-semibold);
 }
 .dock .railBadge {
   position: absolute;
-  top: 6px;
-  right: 12px;
-  min-width: 18px;
-  line-height: 18px;
-  padding: 0 5px;
+  top: 2px;
+  left: calc(50% + 8px);
+  min-width: 16px;
+  line-height: 16px;
+  padding: 0 4px;
+  font-size: 10px;
   background: var(--bio-critical-fill);
   color: var(--bio-on-critical);
-  box-shadow: 0 0 0 2px var(--bio-porcelain-solid);
 }
 @media (max-width: 760px) {
+  .dock[data-responsive="true"] {
+    padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
+    background: color-mix(in srgb, var(--bio-canvas) 82%, transparent);
+    border-top: 1px solid var(--bio-divider);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    backdrop-filter: blur(24px) saturate(1.4);
+  }
+  [data-bio-fidelity="lite"] .dock[data-responsive="true"] {
+    background: var(--bio-canvas);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
   .dock[data-responsive="true"] .railList {
     flex-direction: row;
     justify-content: space-around;
+    gap: 0;
   }
   .dock[data-responsive="true"] .railItem {
     width: auto;
-    min-width: 64px;
     flex: 1;
-    min-height: 56px;
-  }
-  .dock[data-responsive="true"] .railActive::before {
-    display: none;
+    min-height: 52px;
   }
 }

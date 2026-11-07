@@ -55,41 +55,22 @@
 }
 
 /* ── variants ───────────────────────────────────────────────── */
-/* Primary: a lit fill with a soft glow cast in its own colour. */
+/* Flat, solid forms. Hierarchy comes from tone and contrast, not from
+   volume, gloss or glow (§3.5 serenity). */
 .primary {
-  --bio-lumen-width: 1px;
-  --_base: var(--bio-primary-fill);
-  background: var(--bio-primary-fill);
+  background: var(--bio-primary);
   color: var(--bio-on-primary);
-  box-shadow:
-    var(--bio-primary-glow),
-    inset 0 1px 0 rgb(255 255 255 / 0.28),
-    inset 0 -1px 0 rgb(0 0 0 / 0.12);
 }
 .primary:hover:not([aria-disabled="true"]) {
-  box-shadow:
-    0 14px 30px -12px color-mix(in srgb, var(--bio-primary) 60%, transparent),
-    0 10px 34px -8px rgb(155 151 255 / 0.45),
-    inset 0 1px 0 rgb(255 255 255 / 0.32),
-    inset 0 -1px 0 rgb(0 0 0 / 0.12);
+  background: var(--bio-primary-hover);
 }
 
-/* Secondary: a small piece of glass. */
 .secondary {
-  background: var(--bio-membrane-bg);
+  background: color-mix(in srgb, var(--bio-text) 6%, transparent);
   color: var(--bio-text);
-  border-color: var(--bio-membrane-border);
-  box-shadow: var(--bio-depth-1), var(--bio-membrane-highlight);
-  -webkit-backdrop-filter: var(--bio-membrane-filter);
-  backdrop-filter: var(--bio-membrane-filter);
 }
 .secondary:hover:not([aria-disabled="true"]) {
-  box-shadow: var(--bio-depth-2), var(--bio-membrane-highlight);
-}
-[data-bio-fidelity="lite"] .secondary {
-  background: var(--bio-membrane-bg-opaque);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  background: color-mix(in srgb, var(--bio-text) 10%, transparent);
 }
 
 .tertiary {
@@ -101,12 +82,11 @@
 }
 
 .destructive {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--bio-critical-fill) 88%, white), var(--bio-critical-fill));
+  background: var(--bio-critical-fill);
   color: var(--bio-on-critical);
-  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--bio-critical-fill) 70%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.25);
 }
 .destructive:hover:not([aria-disabled="true"]) {
-  box-shadow: var(--bio-depth-2);
+  background: color-mix(in srgb, var(--bio-critical-fill) 88%, black);
 }
 
 /* Disabled: reduced responsiveness without ambiguity (§12.1). Still focusable. */
