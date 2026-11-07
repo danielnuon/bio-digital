@@ -89,26 +89,13 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: var(--bio-lumen-width, 1.5px);
-  /* written out (not the token) so the animated angle resolves here */
-  background: conic-gradient(
-    from var(--bio-lumen-angle),
-    var(--bio-lumen-1),
-    var(--bio-lumen-2),
-    var(--bio-lumen-3),
-    var(--bio-lumen-4),
-    var(--bio-lumen-5),
-    var(--bio-lumen-1)
-  );
+  padding: var(--bio-lumen-width, 1px);
+  /* a still hairline: light catches the top-left edge */
+  background: var(--bio-hairline);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
   pointer-events: none;
-  animation: bio-lumen-turn 14s linear infinite;
-}
-[data-bio-motion="reduced"] .bio-lumen::after,
-[data-bio-motion="reduced"] .bio-lumen-turn {
-  animation: none;
 }
 .bio-lumen-turn {
   animation: bio-lumen-turn 14s linear infinite;

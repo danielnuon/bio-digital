@@ -42,7 +42,6 @@ export function ControlTile({ label, on, onChange, icon, status, fill, ink, clas
           <motion.span
             key="fill"
             className={styles.fill}
-            data-bio-finish="candy"
             aria-hidden="true"
             initial={m.reduced ? { opacity: 0 } : { clipPath: "circle(0% at 36px 36px)" }}
             animate={m.reduced ? { opacity: 1 } : { clipPath: "circle(150% at 36px 36px)" }}

@@ -38,7 +38,7 @@ float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*n(p);p=p*2.02+vec2(1
 void main(){
   vec2 uv=gl_FragCoord.xy/r;
   vec2 p=uv*vec2(r.x/r.y,1.)*1.35+view*.08;
-  float s=t*.022;
+  float s=t*.008;
   vec2 q=vec2(fbm(p+vec2(0.,s)),fbm(p+vec2(5.2,1.3)-s));
   vec2 w=vec2(fbm(p+2.6*q+vec2(1.7,9.2)+s*1.4),fbm(p+2.6*q+vec2(8.3,2.8)-s*.9));
   float f=fbm(p+2.2*w);
@@ -132,8 +132,8 @@ export function LivingField({ still = false, onUnsupported, className }: LivingF
         a: parseColor(cs.getPropertyValue("--bio-mood-a"), cur.a),
         b: parseColor(cs.getPropertyValue("--bio-mood-b"), cur.b),
         c: parseColor(cs.getPropertyValue("--bio-mood-c"), cur.c),
-        sheen: night ? 0.035 : 0.07,
-        top: night ? 0 : 0.55,
+        sheen: 0,
+        top: night ? 0 : 0.6,
       };
       if (first) {
         Object.assign(cur, target);

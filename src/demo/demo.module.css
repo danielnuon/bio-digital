@@ -231,33 +231,15 @@
   margin: 0;
   font-family: var(--bio-font-display);
   font-size: clamp(2rem, 1.4rem + 1.8vw, 2.75rem);
-  font-weight: var(--bio-weight-bold);
+  font-weight: var(--bio-weight-semibold);
   line-height: 1.08;
   letter-spacing: var(--bio-tracking-display);
   text-wrap: balance;
 }
-/* The system's voice is written in Lumen. */
+/* The second line is quieter, not louder: tone, not colour. */
 .heroAccent {
-  background: var(--bio-lumen-deep);
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: lumenDrift 12s var(--bio-ease-ambient) infinite alternate;
-}
-[data-bio-environment="night"] .heroAccent {
-  background-image: var(--bio-lumen-linear);
-}
-@keyframes lumenDrift {
-  from {
-    background-position: 0% 50%;
-  }
-  to {
-    background-position: 100% 50%;
-  }
-}
-[data-bio-motion="reduced"] .heroAccent {
-  animation: none;
+  color: var(--bio-text-muted);
+  font-weight: var(--bio-weight-regular);
 }
 .heroBody {
   margin: 0;
@@ -671,10 +653,9 @@
   padding: var(--bio-space-5);
   border-radius: var(--bio-radius-r5);
   background:
-    radial-gradient(circle at 15% 20%, rgb(110 240 194 / 0.55), transparent 40%),
-    radial-gradient(circle at 85% 80%, rgb(155 151 255 / 0.55), transparent 45%),
-    radial-gradient(circle at 60% 30%, rgb(240 166 255 / 0.45), transparent 35%),
-    radial-gradient(circle at 30% 85%, rgb(255 210 122 / 0.45), transparent 40%);
+    radial-gradient(circle at 15% 20%, rgb(167 207 186 / 0.8), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgb(165 199 203 / 0.8), transparent 45%),
+    radial-gradient(circle at 60% 30%, rgb(217 223 218 / 0.7), transparent 35%);
 }
 .materialTile {
   min-height: 180px;

@@ -116,30 +116,16 @@
   --bio-gradient-bloom: linear-gradient(150deg, #ded3ee 0%, #c7b6df 55%, #b8a4d7 100%);
   --bio-gradient-earth: linear-gradient(150deg, #ece2c3 0%, #d9c99c 55%, #cdba86 100%);
 
-  /* ── signature: Lumen (§4.3, §3.7) ───────────────────────────────
-     Structural colour from living things: nacre, beetle shell, and
-     bioluminescence. It is light, never paint. Lumen appears only where
-     something is alive or active (the primary action, the current place,
-     live data, the system's voice) and covers well under 5% of a screen.
-     Everything else stays in the spec's calm neutrals and accents. */
-  --bio-lumen-1: #6ef0c2; /* biolume mint */
-  --bio-lumen-2: #5ccfff; /* glacier cyan */
-  --bio-lumen-3: #9b97ff; /* dusk violet */
-  --bio-lumen-4: #f0a6ff; /* orchid nacre */
-  --bio-lumen-5: #ffd27a; /* pollen gold */
-  /* static snapshot; animated rims write the conic out locally */
-  --bio-lumen-conic: conic-gradient(
-    from 200deg,
-    var(--bio-lumen-1),
-    var(--bio-lumen-2),
-    var(--bio-lumen-3),
-    var(--bio-lumen-4),
-    var(--bio-lumen-5),
-    var(--bio-lumen-1)
-  );
-  --bio-lumen-linear: linear-gradient(100deg, var(--bio-lumen-1), var(--bio-lumen-2) 30%, var(--bio-lumen-3) 60%, var(--bio-lumen-4) 85%, var(--bio-lumen-5));
-  /* deep cut for text and thin strokes on light ground (large text ≥3:1, most stops ≥4.5:1) */
-  --bio-lumen-deep: linear-gradient(100deg, #0a7f5e, #1374b0 35%, #5548cf 70%, #a23fa3);
+  /* ── signature: Lumen (§4.3, §3.5) ───────────────────────────────
+     A tonal pearl drawn only from neighbouring spec hues: Mist, Growth,
+     Water. No metallics, no rainbow. Serenity (§3.5) comes from how few
+     hues there are; elegance from how finely they are graded. */
+  --bio-lumen-1: #cfe3d7; /* sage mist */
+  --bio-lumen-2: #b9d5d6; /* water mist */
+  --bio-lumen-3: #e4ebe6; /* pearl */
+  --bio-lumen-linear: linear-gradient(100deg, var(--bio-lumen-1), var(--bio-lumen-2) 50%, var(--bio-lumen-3));
+  /* a quiet light edge for the one primary action */
+  --bio-hairline: linear-gradient(160deg, rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.08) 45%, rgb(255 255 255 / 0) 70%, rgb(255 255 255 / 0.12));
 
   /* grain keeps large gradients from banding and gives surfaces tooth */
   --bio-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");

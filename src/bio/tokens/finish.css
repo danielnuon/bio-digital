@@ -19,6 +19,10 @@
  * useViewAngle from device tilt, the pointer, or scroll. Finishes apply only
  * at full fidelity; reduced motion holds the angle at 0 (a still finish).
  *
+ * Restraint is part of the system: no flake by default, low pearl
+ * strength, and only neighbouring hues, so finishes read as depth and
+ * quality rather than effect.
+ *
  * Usage: data-bio-finish="pearl" | "chroma" | "candy" | "satin"
  * on a Surface/Card (finish prop), or on any element that sets --_base.
  */
@@ -41,15 +45,15 @@
 }
 
 [data-bio-environment="day"] {
-  --bio-flake: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='f' x='0' y='0'><feTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='1' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  3.2 0 0 0 -2.15'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>");
-  --_gloss: 0.75;
-  --_pearl-a: 0.13;
+  --bio-flake: linear-gradient(transparent, transparent);
+  --_gloss: 0.6;
+  --_pearl-a: 0.1;
   --_pearl-blend: normal;
 }
 [data-bio-environment="night"] {
-  --bio-flake: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='f' x='0' y='0'><feTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='1' seed='7' stitchTiles='stitch'/><feColorMatrix values='1.2 0 0 0 0.1  0 1.1 0 0 0.15  0 0 1.3 0 0.1  3.2 0 0 0 -2.2'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>");
-  --_gloss: 0.07;
-  --_pearl-a: 0.1;
+  --bio-flake: linear-gradient(transparent, transparent);
+  --_gloss: 0.05;
+  --_pearl-a: 0.06;
   --_pearl-blend: screen;
 }
 
@@ -60,14 +64,13 @@
     rgb(255 255 255 / calc(var(--_gloss) * 0.18)) 38%,
     transparent 62%
   );
+  /* tonal pearl: sage → water → pearl white, never a rainbow */
   --_pearl: linear-gradient(
     118deg,
-    rgb(110 240 194 / var(--_pearl-a)),
-    rgb(92 207 255 / var(--_pearl-a)) 20%,
-    rgb(155 151 255 / var(--_pearl-a)) 40%,
-    rgb(240 166 255 / var(--_pearl-a)) 60%,
-    rgb(255 210 122 / var(--_pearl-a)) 80%,
-    rgb(110 240 194 / var(--_pearl-a))
+    rgb(167 207 186 / var(--_pearl-a)),
+    rgb(165 199 203 / var(--_pearl-a)) 35%,
+    rgb(255 255 255 / var(--_pearl-a)) 65%,
+    rgb(167 207 186 / var(--_pearl-a))
   );
   --_candy: linear-gradient(transparent, transparent);
   background-image: var(--_clear), var(--_pearl), var(--bio-flake), var(--_candy), var(--_base, var(--bio-porcelain-bg));
@@ -90,7 +93,7 @@
 
 /* Pearl: a tri-coat white pearl. Calm; colour appears only at an angle. */
 [data-bio-finish="pearl"] {
-  --_pearl-a: 0.12;
+  --_pearl-a: 0.16;
 }
 [data-bio-environment="night"] [data-bio-finish="pearl"],
 [data-bio-environment="night"][data-bio-finish="pearl"] {

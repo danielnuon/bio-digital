@@ -88,16 +88,16 @@ export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
         </div>
       </Surface>
 
-      <Card className={`${s.span4} ${s.ringsCard}`} material="crystal" finish="chroma" depth={2} radius="r6" eyebrow="Today" title="Living balance" headingLevel={2}>
+      <Card className={`${s.span4} ${s.ringsCard}`} material="crystal" finish="pearl" depth={2} radius="r6" eyebrow="Today" title="Living balance" headingLevel={2}>
         <Rings
           label="Living balance"
           centerValue={`${selfSupplied}%`}
           centerLabel="solar"
           size={184}
           rings={[
-            { id: "solar", label: "Solar coverage", value: selfSupplied / 100, valueText: `${selfSupplied}%`, colors: ["var(--bio-lumen-5)", "var(--bio-lumen-ink-4)"] },
-            { id: "air", label: "Air quality", value: live.air / 100, valueText: `${Math.round(live.air)} / 100`, colors: ["var(--bio-lumen-2)", "var(--bio-lumen-ink-3)"] },
-            { id: "water", label: "Cistern", value: live.water / 2900, valueText: `${Math.round((live.water / 2900) * 100)}%`, colors: ["var(--bio-lumen-1)", "var(--bio-lumen-ink-2)"] },
+            { id: "solar", label: "Solar coverage", value: selfSupplied / 100, valueText: `${selfSupplied}%`, colors: ["var(--bio-color-earth)", "var(--bio-ink-earth)"] },
+            { id: "air", label: "Air quality", value: live.air / 100, valueText: `${Math.round(live.air)} / 100`, colors: ["var(--bio-color-water)", "var(--bio-ink-water)"] },
+            { id: "water", label: "Cistern", value: live.water / 2900, valueText: `${Math.round((live.water / 2900) * 100)}%`, colors: ["var(--bio-color-growth)", "var(--bio-ink-growth)"] },
           ]}
         />
       </Card>
@@ -194,8 +194,8 @@ export function Overview({ onNavigate, live, alerts, setAlerts }: Props) {
             min={0}
             height={density === "immersed" ? 280 : 240}
             series={[
-              { id: "use", label: "Demand", data: use, color: "var(--bio-lumen-ink-2)", gradient: ["var(--bio-lumen-ink-1)", "var(--bio-lumen-ink-3)"], glow: true },
-              { id: "solar", label: "Solar", data: solar, color: "var(--bio-lumen-ink-5)", dashed: true, area: false },
+              { id: "use", label: "Demand", data: use, color: "var(--bio-ink-growth)", gradient: ["var(--bio-ink-water)", "var(--bio-ink-growth)"] },
+              { id: "solar", label: "Solar", data: solar, color: "var(--bio-ink-earth)", dashed: true, area: false },
             ]}
           />
         </TabPanel>

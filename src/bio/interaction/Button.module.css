@@ -57,7 +57,7 @@
 /* ── variants ───────────────────────────────────────────────── */
 /* Primary: a lit fill with a soft glow cast in its own colour. */
 .primary {
-  --bio-lumen-width: 1.5px;
+  --bio-lumen-width: 1px;
   --_base: var(--bio-primary-fill);
   background: var(--bio-primary-fill);
   color: var(--bio-on-primary);

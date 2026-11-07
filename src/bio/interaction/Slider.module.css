@@ -120,7 +120,7 @@
   box-shadow: inset -1px 0 0 rgb(255 255 255 / 0.6), 4px 0 16px -4px rgb(105 83 154 / 0.3);
 }
 [data-bio-environment="night"] .capsuleFill {
-  background: var(--bio-gradient-spectrum);
+  background: linear-gradient(90deg, var(--bio-color-water), var(--bio-color-growth));
 }
 .capsuleIcon {
   position: absolute;

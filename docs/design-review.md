@@ -77,6 +77,19 @@ Applied: the hero uses pearl, Living balance uses chroma, metric cards use satin
 
 **Performance, measured honestly.** This sandbox only has a software renderer. There, the page drops from about 30 to about 19 frames per second with the field running, and lowering the field's resolution made no difference. That suggests the cost is in glass panels re-blurring a moving background, not in the shader itself. I have not measured it on real GPU hardware. If an older phone stutters, Lite rendering turns all of this off.
 
+## Pass 8: Calm and serene
+
+Feedback on v4: too much going on. Danny chose **calm and serene** (spec §3.5 Serenity) over a luxury direction.
+
+| Spec intent | Observed in v4 | Pain point | v5 change | Status |
+|---|---|---|---|---|
+| §3.5 restrained colour, limited visual noise, controlled motion. | Rainbow Lumen on rims, rings, chart, headline and orb; spinning rims; sparkle flake; a fast background with satin folds. | Every element competed for attention. | Lumen becomes a tonal pearl made only of neighbouring spec hues (Mist, Growth, Water), with no metallics and no rainbow. Flake is off. Rims no longer turn: the primary action keeps a still light hairline, and the dock and Island have none. | Done |
+| §4.3 gradients restrained and low contrast. | Background moved visibly, with bright folds. | Restless. | The field runs at about a third of the previous speed with no satin folds. Its aura is near-monochrome sage, water and mist, with daylight from above. | Done |
+| §6.2 accents communicate meaning. | Data used five rainbow hues. | Colour stopped meaning anything. | Rings and the energy chart use spec semantics again: Earth for solar, Water for air and cistern flow, Growth for demand. | Done |
+| §9 typography, clear hierarchy. | A bold gradient voice line. | Shouting. | The voice line is regular weight in muted tone, and the hero title is semibold. Hierarchy comes from tone, not colour. | Done |
+
+The finish system and the viewing-angle signal remain in the library, but their defaults are now quiet. Pearl strength is 0.10–0.16, there is no flake, and gloss is soft.
+
 ## Spec compliance, re-checked after v2
 
 - **Accessibility (§18):** axe runs on every view in tests with no violations. Rings use `role="meter"` with value text. The Island is a polite live region. Gestures keep their button alternatives.
