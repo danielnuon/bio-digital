@@ -1,6 +1,7 @@
 /* Scoped base styles for anything inside a BioProvider root. */
 @import "./tokens.css";
 @import "./environment.css";
+@import "./finish.css";
 
 /* Lumen turns slowly: ambient vitality (§3.7). Registered so it can animate. */
 @property --bio-lumen-angle {

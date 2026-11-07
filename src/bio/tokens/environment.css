@@ -235,8 +235,8 @@
    awareness). Attention warms the light; alert adds a restrained red. */
 [data-bio-environment="day"][data-bio-mood="attention"],
 [data-bio-environment="day"] [data-bio-mood="attention"] {
-  --bio-mood-a: rgb(217 201 156 / 0.9);
-  --bio-mood-b: rgb(167 207 186 / 0.6);
+  --bio-mood-a: rgb(217 201 156 / 0.6);
+  --bio-mood-b: rgb(167 207 186 / 0.55);
   --bio-mood-c: rgb(228 170 160 / 0.45);
 }
 [data-bio-environment="night"][data-bio-mood="attention"],

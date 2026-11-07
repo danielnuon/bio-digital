@@ -36,7 +36,7 @@ export function NavRail<T extends string>({ label, value, onChange, items, respo
   // The dock's corners sit against the device's; draw them continuous.
   useContinuousCorners(navRef, readRadius, variant === "dock");
   return (
-    <nav ref={navRef} aria-label={label} className={cx(styles.rail, variant === "dock" && styles.dock, className)} data-responsive={responsive}>
+    <nav ref={navRef} aria-label={label} className={cx(styles.rail, variant === "dock" && styles.dock, className)} data-responsive={responsive} data-bio-finish={variant === "dock" ? "pearl" : undefined}>
       <LayoutGroup id={group}>
         <ul className={styles.railList}>
           {items.map((it) => {
@@ -51,7 +51,7 @@ export function NavRail<T extends string>({ label, value, onChange, items, respo
                   aria-current={active ? "page" : undefined}
                   onClick={() => onChange(it.value)}
                 >
-                  {active && <motion.span layoutId="rail-active" className={cx(styles.railActive, variant === "dock" && "bio-lumen")} transition={m.transition} />}
+                  {active && <motion.span layoutId="rail-active" className={cx(styles.railActive, variant === "dock" && "bio-lumen")} data-bio-finish={variant === "dock" ? "candy" : undefined} transition={m.transition} />}
                   {it.icon && <span className={styles.railIcon} aria-hidden="true">{it.icon}</span>}
                   <span className={styles.railLabel}>{it.label}</span>
                   {it.badge ? (

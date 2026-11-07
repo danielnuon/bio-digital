@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { MotionConfig } from "motion/react";
-import { useMaterialLight } from "./useMaterialLight";
+import { useMaterialLight, useViewAngle } from "./useMaterialLight";
 import { detectDeviceCorners, type DeviceCorners } from "../utils/corners";
 import "../tokens/base.css";
 
@@ -131,6 +131,7 @@ export function BioProvider({
   const motion = motionPreference === "system" ? (systemReduced ? "reduced" : "organic") : motionPreference;
   const fidelity: Fidelity = fidelityPref === "auto" ? detectFidelity() : fidelityPref;
   useMaterialLight(rootEl, fidelity === "full" && motion === "organic");
+  useViewAngle(rootEl, fidelity === "full" && motion === "organic");
 
   useEffect(() => {
     if (!storageKey) return;

@@ -7,7 +7,7 @@
   transition: background-color var(--bio-duration-surface) var(--bio-ease-settle);
 }
 
-/* Layer 1 — Environment: static gradient, low-frequency ambient forms. */
+/* Layer 1 — Environment: a flowing gradient field (CSS forms as fallback). */
 .environment {
   position: fixed;
   inset: 0;
@@ -40,6 +40,15 @@
     --bio-mood-a 2.4s var(--bio-ease-ambient),
     --bio-mood-b 2.4s var(--bio-ease-ambient),
     --bio-mood-c 2.4s var(--bio-ease-ambient);
+}
+
+/* The flowing field (LivingField) fills the environment, upscaled smoothly. */
+.field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* Static grain: stops large gradients banding, gives the canvas tooth. */

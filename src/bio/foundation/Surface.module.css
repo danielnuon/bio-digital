@@ -11,6 +11,7 @@
 
 /* ── materials (§5) ─────────────────────────────────────────── */
 .porcelain {
+  --_base: var(--bio-porcelain-bg);
   background: var(--bio-porcelain-bg);
   border: 1px solid var(--bio-porcelain-border);
   box-shadow: var(--_depth), var(--bio-porcelain-highlight);
@@ -19,6 +20,7 @@
 /* Membrane: refractive glass with a light rim brightest where the light
    source (top-left) meets it. The rim is a masked gradient border. */
 .membrane {
+  --_base: var(--bio-membrane-bg);
   background: var(--bio-membrane-bg);
   border: 1px solid transparent;
   box-shadow: var(--_depth), var(--bio-membrane-highlight);
@@ -50,6 +52,7 @@
 }
 
 .crystal {
+  --_base: var(--bio-crystal-bg);
   background: var(--bio-crystal-bg);
   border: 1px solid transparent;
   box-shadow: var(--_depth), var(--bio-crystal-highlight);
@@ -65,6 +68,7 @@
 }
 
 .carbon {
+  --_base: var(--bio-carbon-bg);
   background: var(--bio-carbon-bg);
   border: 1px solid var(--bio-carbon-border);
   box-shadow: var(--_depth), inset 0 1px 0 rgb(255 255 255 / 0.06);

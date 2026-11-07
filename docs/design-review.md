@@ -63,6 +63,20 @@ Feedback on v2: the palette felt "too basic and not unique."
 
 **Note on the spec.** Lumen is an addition to §6, not a replacement. The §6.1–6.3 tokens are unchanged. If you adopt it, the spec should gain a §6.5 "Signature light" section with the five Lumen hues and the under-5% usage rule.
 
+## Pass 7: Living gradient and layered finishes
+
+Feedback on v3: the static gradient felt off-putting. Colour should be built the way automotive paint is layered, without looking like a painted car.
+
+| Spec intent | Observed in v3 | Pain point | v4 change | Status |
+|---|---|---|---|---|
+| §4.3 the living gradient; §3.7 ambient life. | A fixed CSS gradient with three blurred blobs drifting. | It read as wallpaper, not as light. | `LivingField`: a domain-warped noise field rendered with WebGL that folds slowly, like ink in water, with thin satin highlights along its contours. Its colours ease toward the current environment and mood tokens, so a change of state flows through the field. It renders at one-fifth resolution, runs at about 22 fps, and pauses when the tab is hidden. Reduced motion gets a single still frame. Lite fidelity or no WebGL falls back to the CSS forms. | Done |
+| §5 materials and §3.7 material life. | Each surface was one colour plus one highlight. | Flat, "basic colour then effect." | **Finish system** (`tokens/finish.css`), modelled on tri-coat paint: base (the material), pearl (Lumen interference colour that shifts hue with viewing angle), flake (fine mica sparkle that drifts against the layers above it), candy tint, and clearcoat (a gloss reflection that slides with the angle). The different rates of movement between layers are what create the sense of depth. There are four finishes: `pearl`, `chroma`, `candy` and `satin`. | Done |
+| §3.7 behavioural life. | Highlights only followed a hovering mouse. | Nothing changed on phones. | `useViewAngle` writes `--bio-view-x/y` from device tilt (iOS asks permission once, from Preferences), the pointer, or scroll position on touch screens. The root eases the values over 0.9 s, so the finish moves with some weight. | Done |
+
+Applied: the hero uses pearl, Living balance uses chroma, metric cards use satin, the primary button, active dock item and "on" control tiles use candy, and the dock uses pearl.
+
+**Performance, measured honestly.** This sandbox only has a software renderer. There, the page drops from about 30 to about 19 frames per second with the field running, and lowering the field's resolution made no difference. That suggests the cost is in glass panels re-blurring a moving background, not in the shader itself. I have not measured it on real GPU hardware. If an older phone stutters, Lite rendering turns all of this off.
+
 ## Spec compliance, re-checked after v2
 
 - **Accessibility (§18):** axe runs on every view in tests with no violations. Rings use `role="meter"` with value text. The Island is a polite live region. Gestures keep their button alternatives.

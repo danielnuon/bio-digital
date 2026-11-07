@@ -290,6 +290,7 @@
   border-radius: max(var(--bio-radius-r5), calc(var(--bio-device-radius) - var(--bio-edge-gap)));
   --bio-outer-radius: max(var(--bio-radius-r5), calc(var(--bio-device-radius) - var(--bio-edge-gap)));
   --bio-outer-pad: 8px;
+  --_base: var(--bio-membrane-bg);
   background: var(--bio-membrane-bg);
   border: 1px solid var(--bio-membrane-border);
   box-shadow: var(--bio-depth-3), var(--bio-membrane-highlight);
@@ -327,6 +328,7 @@
 }
 .dock .railActive {
   --bio-lumen-width: 1.5px;
+  --_base: var(--bio-primary-fill);
   background: var(--bio-primary-fill);
   box-shadow: var(--bio-primary-glow), inset 0 1px 0 rgb(255 255 255 / 0.18);
 }

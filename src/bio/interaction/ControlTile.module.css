@@ -45,6 +45,7 @@
   inset: 0;
   z-index: -1;
   border-radius: inherit;
+  --_base: var(--_fill, var(--bio-fill-growth));
   background: var(--_fill, var(--bio-fill-growth));
 }
 .tile[aria-pressed="true"] {

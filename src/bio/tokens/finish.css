@@ -1,0 +1,134 @@
+/*
+ * Finishes: colour built in layers, the way automotive paint is.
+ *
+ * A finish is not a colour plus an effect. Like a tri-coat paint it is a
+ * stack, and its character comes from how the layers interact with light
+ * and with the viewing angle:
+ *
+ *   5  clearcoat    a glossy reflection of the light source; it slides as
+ *                   the viewing angle changes
+ *   4  candy tint   a translucent tint that deepens the colour beneath
+ *   3  flake        fine mica sparkle, set slightly "below" the clearcoat:
+ *                   it parallaxes against the layers above
+ *   2  pearl        interference colour (Lumen) that flops between hues as
+ *                   the angle changes, like pearl or colour-shift paint
+ *   1  base         the material itself (porcelain, membrane, crystal,
+ *                   carbon, or a fill)
+ *
+ * The viewing angle is --bio-view-x / --bio-view-y (−1…1), written by
+ * useViewAngle from device tilt, the pointer, or scroll. Finishes apply only
+ * at full fidelity; reduced motion holds the angle at 0 (a still finish).
+ *
+ * Usage: data-bio-finish="pearl" | "chroma" | "candy" | "satin"
+ * on a Surface/Card (finish prop), or on any element that sets --_base.
+ */
+
+@property --bio-view-x {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --bio-view-y {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+/* The angle eases with mass instead of tracking input rigidly (§10). */
+[data-bio-root] {
+  transition:
+    --bio-view-x 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    --bio-view-y 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-bio-environment="day"] {
+  --bio-flake: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='f' x='0' y='0'><feTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='1' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  3.2 0 0 0 -2.15'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>");
+  --_gloss: 0.75;
+  --_pearl-a: 0.13;
+  --_pearl-blend: normal;
+}
+[data-bio-environment="night"] {
+  --bio-flake: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='f' x='0' y='0'><feTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='1' seed='7' stitchTiles='stitch'/><feColorMatrix values='1.2 0 0 0 0.1  0 1.1 0 0 0.15  0 0 1.3 0 0.1  3.2 0 0 0 -2.2'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>");
+  --_gloss: 0.07;
+  --_pearl-a: 0.1;
+  --_pearl-blend: screen;
+}
+
+[data-bio-fidelity="full"] [data-bio-finish] {
+  --_clear: radial-gradient(
+    150% 70% at calc(22% + var(--bio-view-x) * 34%) calc(-18% + var(--bio-view-y) * 8%),
+    rgb(255 255 255 / var(--_gloss)),
+    rgb(255 255 255 / calc(var(--_gloss) * 0.18)) 38%,
+    transparent 62%
+  );
+  --_pearl: linear-gradient(
+    118deg,
+    rgb(110 240 194 / var(--_pearl-a)),
+    rgb(92 207 255 / var(--_pearl-a)) 20%,
+    rgb(155 151 255 / var(--_pearl-a)) 40%,
+    rgb(240 166 255 / var(--_pearl-a)) 60%,
+    rgb(255 210 122 / var(--_pearl-a)) 80%,
+    rgb(110 240 194 / var(--_pearl-a))
+  );
+  --_candy: linear-gradient(transparent, transparent);
+  background-image: var(--_clear), var(--_pearl), var(--bio-flake), var(--_candy), var(--_base, var(--bio-porcelain-bg));
+  background-size: 100% 100%, 320% 320%, 140px 140px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  /* each layer moves at its own rate: pearl flops widely, flake drifts a few
+     pixels beneath the clearcoat, the base stays put. That differential is
+     what reads as depth in the paint. */
+  background-position:
+    0 0,
+    calc(50% + var(--bio-view-x) * 46%) calc(50% + var(--bio-view-y) * 30%),
+    calc(var(--bio-view-x) * -7px) calc(var(--bio-view-y) * -7px),
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+  background-repeat: no-repeat, no-repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-blend-mode: normal, var(--_pearl-blend), normal, normal, normal, normal, normal, normal;
+}
+
+/* Pearl: a tri-coat white pearl. Calm; colour appears only at an angle. */
+[data-bio-finish="pearl"] {
+  --_pearl-a: 0.12;
+}
+[data-bio-environment="night"] [data-bio-finish="pearl"],
+[data-bio-environment="night"][data-bio-finish="pearl"] {
+  --_pearl-a: 0.09;
+}
+
+/* Chroma: colour-shift paint. The hue travels across the surface with angle. */
+[data-bio-finish="chroma"] {
+  --_pearl-a: 0.26;
+  --_gloss: 0.6;
+}
+[data-bio-environment="night"] [data-bio-finish="chroma"],
+[data-bio-environment="night"][data-bio-finish="chroma"] {
+  --_pearl-a: 0.2;
+  --_gloss: 0.1;
+}
+
+/* Candy: a deep, wet colour. Tint over flake over the base. */
+[data-bio-fidelity="full"] [data-bio-finish="candy"] {
+  --_pearl-a: 0.2;
+  --_gloss: 0.55;
+  --_pearl-blend: soft-light;
+  --_candy: linear-gradient(165deg, rgb(255 255 255 / 0.28), transparent 45%);
+}
+[data-bio-environment="night"] [data-bio-finish="candy"],
+[data-bio-environment="night"][data-bio-finish="candy"] {
+  --_gloss: 0.35;
+}
+
+/* Satin: a low-gloss finish for supporting surfaces; no flake. */
+[data-bio-fidelity="full"] [data-bio-finish="satin"] {
+  --bio-flake: linear-gradient(transparent, transparent);
+}
+[data-bio-finish="satin"] {
+  --_pearl-a: 0.05;
+  --_gloss: 0.35;
+}
+[data-bio-environment="night"] [data-bio-finish="satin"],
+[data-bio-environment="night"][data-bio-finish="satin"] {
+  --_gloss: 0.04;
+}

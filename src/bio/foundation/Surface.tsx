@@ -5,6 +5,7 @@ import { cx } from "../utils/cx";
 import styles from "./Surface.module.css";
 
 export type Depth = 0 | 1 | 2 | 3 | 4;
+export type Finish = "pearl" | "chroma" | "candy" | "satin";
 export type Radius = "r1" | "r2" | "r3" | "r4" | "r5" | "r6" | "pill" | "organic";
 export type Padding = "none" | "sm" | "md" | "lg" | "density";
 
@@ -16,6 +17,8 @@ export interface SurfaceProps extends HTMLAttributes<HTMLElement> {
   padding?: Padding;
   /** Specular highlight follows the pointer. Defaults on for membrane, crystal and carbon. */
   lit?: boolean;
+  /** Layered finish (see tokens/finish.css): pearl, chroma, candy or satin. */
+  finish?: Finish;
   children?: ReactNode;
 }
 
@@ -40,7 +43,7 @@ export const LIT = { "data-bio-light": "" } as const;
  * semantic tokens to the night environment so content inside stays legible.
  */
 export const Surface = forwardRef<HTMLElement, SurfaceProps>(function Surface(
-  { as: Comp = "div", material = "porcelain", depth = 1, radius = "r3", padding = "none", lit, className, ...rest },
+  { as: Comp = "div", material = "porcelain", depth = 1, radius = "r3", padding = "none", lit, finish, className, ...rest },
   ref,
 ) {
   const { environment } = useBio();
@@ -51,6 +54,7 @@ export const Surface = forwardRef<HTMLElement, SurfaceProps>(function Surface(
     <Comp
       ref={ref}
       data-bio-material={material}
+      data-bio-finish={finish}
       data-bio-depth={`D${depth}`}
       className={cx(surfaceClass(material, depth, radius, padding, isLit), className)}
       {...(isLit ? LIT : undefined)}

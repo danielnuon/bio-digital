@@ -16,7 +16,9 @@ export type { MotionMode } from "./physics/useBioMotion";
 // 16.1 Foundation
 export { Canvas, Recede } from "./foundation/Canvas";
 export { Surface, surfaceClass } from "./foundation/Surface";
-export type { SurfaceProps, Depth, Radius, Padding } from "./foundation/Surface";
+export type { SurfaceProps, Depth, Radius, Padding, Finish } from "./foundation/Surface";
+export { LivingField } from "./foundation/LivingField";
+export { useViewAngle, requestTiltPermission } from "./context/useMaterialLight";
 export { Container, Stack, Divider, MaterialLayer, OrganicShape, organicPath } from "./foundation/Layout";
 
 // 16.2 Interaction

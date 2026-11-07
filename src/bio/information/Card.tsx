@@ -1,6 +1,6 @@
 import { forwardRef, useId, useRef, type HTMLAttributes, type ReactNode } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useTransform, type PanInfo } from "motion/react";
-import { surfaceClass, type Depth, type Radius } from "../foundation/Surface";
+import { surfaceClass, type Depth, type Finish, type Radius } from "../foundation/Surface";
 import { useBio } from "../context/BioProvider";
 import { shouldDismiss, type Material } from "../physics/physics";
 import { useBioMotion } from "../physics/useBioMotion";
@@ -14,6 +14,8 @@ type DivProps = Omit<
 
 export interface CardProps extends DivProps {
   material?: Material;
+  /** Layered finish: pearl, chroma, candy or satin. */
+  finish?: Finish;
   depth?: Depth;
   radius?: Radius;
   eyebrow?: ReactNode;
@@ -54,6 +56,7 @@ const Close = () => (
 export const Card = forwardRef<HTMLElement, CardProps>(function Card(
   {
     material = "porcelain",
+    finish,
     depth = 1,
     radius = "r4",
     eyebrow,
@@ -116,6 +119,7 @@ export const Card = forwardRef<HTMLElement, CardProps>(function Card(
       transition={m.transition}
       aria-labelledby={title ? `${id}-t` : undefined}
       data-bio-material={material}
+      data-bio-finish={finish}
       data-interactive={interactive || undefined}
       data-draggable={draggable || undefined}
       className={cx(surfaceClass(material, depth, radius), styles.card, className)}
